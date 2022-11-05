@@ -45,9 +45,10 @@ namespace FDMS.DatabaseTestClient
                 { AccelXTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Accel_X = (float)obj) },
                 { AccelYTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Accel_Y = (float)obj) },
                 { AccelZTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Accel_Z = (float)obj) },
+                { WeightTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Weight= (float)obj) },
                 { AltitudeTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Altitude = (float)obj) },
                 { PitchTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Pitch = (float)obj) },
-                { BankTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Bank = (float)obj) },
+                { BankTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Bank = (float)obj) }
             };
 
             defaultBorderBrush = UsernameTextBox.BorderBrush;

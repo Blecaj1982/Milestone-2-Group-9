@@ -82,6 +82,7 @@ namespace FDMS.DAL
                         com.Parameters.AddWithValue("@Accel_X", record.Accel_X);
                         com.Parameters.AddWithValue("@Accel_Y", record.Accel_Y);
                         com.Parameters.AddWithValue("@Accel_Z", record.Accel_Z);
+                        com.Parameters.AddWithValue("@Weight", record.Weight);
                         com.Parameters.AddWithValue("@Altitude", record.Altitude);
                         com.Parameters.AddWithValue("@Pitch", record.Pitch);
                         com.Parameters.AddWithValue("@Bank", record.Bank);

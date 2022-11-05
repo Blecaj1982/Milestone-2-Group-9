@@ -4,6 +4,7 @@
 	@Accel_X float,
 	@Accel_Y float,
 	@Accel_Z float,
+	@Weight float,
 	@Altitude float,
 	@Pitch float,
 	@Bank float
@@ -15,7 +16,7 @@ AS
 
 	SET @Telemetry_ID = SCOPE_IDENTITY();
 
-	INSERT INTO [G_Force_Parameters] VALUES(@Telemetry_ID, @Accel_X, @Accel_Y, @Accel_Z);
+	INSERT INTO [G_Force_Parameters] VALUES(@Telemetry_ID, @Accel_X, @Accel_Y, @Accel_Z, @Weight);
 	INSERT INTO [Altitude_Parameters] VALUES(@Telemetry_ID, @Altitude, @Pitch, @Bank);
 
 RETURN 0

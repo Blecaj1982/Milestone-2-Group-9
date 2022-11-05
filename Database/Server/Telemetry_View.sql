@@ -7,6 +7,7 @@
 	G_Force_Parameters.Accel_X,
 	G_Force_Parameters.Accel_Y,
 	G_Force_Parameters.Accel_Z,
+	G_Force_Parameters.Weight,
 	Altitude_Parameters.Altitude,
 	Altitude_Parameters.Pitch,
 	Altitude_Parameters.Bank
