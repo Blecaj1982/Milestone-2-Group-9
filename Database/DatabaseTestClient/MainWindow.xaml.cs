@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using FDMS.DAL;
+
 namespace FDMS.DatabaseTestClient
 {
     /// <summary>
@@ -20,17 +23,20 @@ namespace FDMS.DatabaseTestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<Button> ConnectedButtons = new List<Button>();
-        private Dictionary<TextBox, Func<string, object>> InputConverters;
+        private List<Button> connectedButtons = new List<Button>();
+        private Dictionary<TextBox, Func<string, object>> inputConverters;
+        private Brush defaultBorderBrush;
+
+        private FdmsDatabase database = new FdmsDatabase();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            ConnectedButtons.AddRange(new Button[] { DisconnectButton, InsertButton, SelectButton });
-            ConnectedButtons.ForEach(b => b.IsEnabled = false);
+            connectedButtons.AddRange(new Button[] { DisconnectButton, InsertButton, SelectButton });
+            connectedButtons.ForEach(b => b.IsEnabled = false);
 
-            InputConverters = new Dictionary<TextBox, Func<string, object>>()
+            inputConverters = new Dictionary<TextBox, Func<string, object>>()
             {
                 { AircraftTailNumTextBox, ConvertAircraftTailNum },
                 { TimestampTextBox, ConvertDateTime },
@@ -42,6 +48,8 @@ namespace FDMS.DatabaseTestClient
                 { BankTextBox, ConvertFloat },
                 { AircraftTailNumSelectTextBox, ConvertAircraftTailNum }
             };
+
+            defaultBorderBrush = UsernameTextBox.BorderBrush;
         }
 
         #region TextBox Validation Methods
@@ -62,5 +70,105 @@ namespace FDMS.DatabaseTestClient
         }
 
         #endregion
+
+        private void ConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!database.Connected)
+            {
+                UsernameTextBox.BorderBrush = defaultBorderBrush;
+                PasswordTextBox.BorderBrush = defaultBorderBrush;
+                IpAddressTextBox.BorderBrush = defaultBorderBrush;
+                PortNumTextBox.BorderBrush = defaultBorderBrush;
+
+                ConnectionInput input = ParseConnectionInput();
+                if (input.Valid)
+                {
+                    string connectionStr =
+                        $"Data Source={input.IpAddress},{input.Port};" +
+                        $"Database=FDMS_Server;" +
+                        $"User ID={input.Username};" +
+                        $"Password={input.Password};";
+
+                    DALResult result = database.Connect(connectionStr);
+
+                    if (result.Success && database.Connected)
+                    {
+                        ConnectButton.IsEnabled = false;
+                        connectedButtons.ForEach(b => b.IsEnabled = true);
+                    }
+                    else
+                    {
+                        MessageBox.Show(result.FailureMessage);
+                    }
+                }
+            }
+        }
+
+        private void DisconnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (database.Connected)
+            {
+                DALResult result = database.Disconnect();
+                if (!result.Success)
+                {
+                    MessageBox.Show(result.FailureMessage);
+                }
+            }
+
+            ConnectButton.IsEnabled = true;
+            connectedButtons.ForEach(b => b.IsEnabled = false);
+        }
+
+        private ConnectionInput ParseConnectionInput()
+        {
+            bool valid = true;
+            string username = UsernameTextBox.Text;
+            string password = PasswordTextBox.Text;
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                UsernameTextBox.BorderBrush = Brushes.Red;
+                valid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                PasswordTextBox.BorderBrush = Brushes.Red;
+                valid = false;
+            }
+
+            IPAddress ipAddress = null;
+            ushort port = 0;
+
+            if (!IPAddress.TryParse(IpAddressTextBox.Text, out ipAddress))
+            {
+                IpAddressTextBox.BorderBrush = Brushes.Red;
+                valid = false; 
+            }
+
+            if (!ushort.TryParse(PortNumTextBox.Text, out port))
+            {
+                PortNumTextBox.BorderBrush = Brushes.Red;
+                valid = false;
+            }
+
+            return new ConnectionInput()
+            {
+                Valid = valid,
+                Username = username,
+                Password = password,
+                IpAddress = ipAddress,
+                Port = port
+            };
+        }
+
+        private class ConnectionInput
+        {
+            public bool Valid;
+            public string Username;
+            public string Password;
+            public IPAddress IpAddress;
+            public ushort Port;
+        }
     }
 }

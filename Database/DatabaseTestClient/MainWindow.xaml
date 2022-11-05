@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FDMS.DatabaseTestClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="500">
+        Title="MainWindow" Height="730" Width="500">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="150"/>
             <RowDefinition Height="250"/>
             <RowDefinition Height="240"/>
             <RowDefinition Height="50"/>
@@ -21,7 +21,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Username" Grid.Column="0"/>
-                <TextBox x:Name="UsernameTextBox" Grid.Column="1"/>
+                <TextBox x:Name="UsernameTextBox" Text="FDMS_User" Grid.Column="1"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -29,9 +29,25 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Password" Grid.Column="0"/>
-                <TextBox x:Name="PasswordTextBox" Grid.Column="1"/>
+                <TextBox x:Name="PasswordTextBox" Text ="FDMS_Password" Grid.Column="1"/>
             </Grid>
-                <Button x:Name="ConnectButton" Content="Connect" Margin="10" Width="160"/>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="IP Address" Grid.Column="0"/>
+                <TextBox x:Name="IpAddressTextBox" Text="192.168.2.192" Grid.Column="1"/>
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Port #" Grid.Column="0"/>
+                <TextBox x:Name="PortNumTextBox" Text="4500" Grid.Column="1"/>
+            </Grid>
+                <Button x:Name="ConnectButton" Content="Connect" Margin="10" Width="160" Click="ConnectButton_Click"/>
             </StackPanel>
         </Grid>
 
@@ -119,6 +135,6 @@
                 </RichTextBox>
             </StackPanel>            
         </Grid>
-        <Button Grid.Row="3" x:Name="DisconnectButton" Content="Disconnect" Margin="10" Width="160" VerticalAlignment="Center"/>
+        <Button Grid.Row="3" x:Name="DisconnectButton" Content="Disconnect" Margin="10" Width="160" VerticalAlignment="Center" Click="DisconnectButton_Click"/>
     </Grid>
 </Window>

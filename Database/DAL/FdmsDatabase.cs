@@ -9,6 +9,7 @@ namespace FDMS.DAL
 {
     public class FdmsDatabase : IFdmsDatabase
     {
+        public bool Connected { get; private set; } = false;
         private SqlConnection connection = null;
         
         public DALResult Connect(string connectionString)
@@ -29,12 +30,14 @@ namespace FDMS.DAL
             try
             {
                 connection.Open();
+                Connected = true;
                 return new DALResult();
             }
             catch (Exception ex)
             {
                 connection.Dispose();
                 connection = null;
+                Connected = false;
                 return new DALResult(ex.Message);
             }
         }
@@ -50,6 +53,7 @@ namespace FDMS.DAL
 
                 connection.Dispose();
                 connection = null;
+                Connected = false;
                 return new DALResult();
             }
             else
