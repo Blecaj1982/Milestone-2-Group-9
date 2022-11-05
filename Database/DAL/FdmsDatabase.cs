@@ -101,7 +101,47 @@ namespace FDMS.DAL
 
         public DALSelectResult Select(string aircraftTailNum)
         {
-            throw new NotImplementedException();
+            if (connection != null)
+            {
+                try
+                {
+                    List<TelemetryRecordDAL> records = new List<TelemetryRecordDAL>();
+                    using (SqlCommand com = connection.CreateCommand())
+                    {
+                        com.CommandText = "SELECT * FROM Telemetry_View WHERE @tailNum = Aircraft_Tail_Num";
+                        com.Parameters.AddWithValue("@tailNum", aircraftTailNum);
+
+                        using (SqlDataReader reader = com.ExecuteReader())
+                        {
+                            while(reader.Read())
+                            {
+                                TelemetryRecordDAL record = new TelemetryRecordDAL(
+                                    reader.GetString(1),
+                                    reader.GetDateTime(2),
+                                    reader.GetDateTime(3),
+                                    (float)reader.GetDouble(4),
+                                    (float)reader.GetDouble(5),
+                                    (float)reader.GetDouble(6),
+                                    (float)reader.GetDouble(7),
+                                    (float)reader.GetDouble(8),
+                                    (float)reader.GetDouble(9),
+                                    (float)reader.GetDouble(10)
+                                );
+
+                                records.Add(record);
+                            }
+                        }
+                    }
+
+                    return new DALSelectResult(records);
+                }
+                catch (Exception ex)
+                {
+                    return new DALSelectResult(ex.Message);
+                }
+            }
+
+            return new DALSelectResult("Connection is not open.");
         }
     }
 }

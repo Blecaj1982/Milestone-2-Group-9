@@ -31,10 +31,10 @@ namespace FDMS.DAL
             FailureMessage = failureMessage;
         }
 
-        public DALSelectResult(TelemetryRecordDAL[] records)
+        public DALSelectResult(List<TelemetryRecordDAL> records)
         {
             Success = true;
-            Records = records.ToList();
+            Records = records;
             FailureMessage = "";
         }
 

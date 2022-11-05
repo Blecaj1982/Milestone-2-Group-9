@@ -10,6 +10,7 @@ namespace FDMS.DAL
     {
         public string AircraftTailNum;
         public DateTime Timestamp;
+        public DateTime EntryTimestamp;
         public float Accel_X;
         public float Accel_Y;
         public float Accel_Z;
@@ -20,10 +21,11 @@ namespace FDMS.DAL
 
         public TelemetryRecordDAL() { }
 
-        public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, float accel_X, float accel_Y, float accel_Z, float weight, float altitude, float pitch, float bank)
+        public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, DateTime entryTimestamp, float accel_X, float accel_Y, float accel_Z, float weight, float altitude, float pitch, float bank)
         {
             AircraftTailNum = aircraftTailNum;
             Timestamp = timestamp;
+            EntryTimestamp = entryTimestamp;
             Accel_X = accel_X;
             Accel_Y = accel_Y;
             Accel_Z = accel_Z;

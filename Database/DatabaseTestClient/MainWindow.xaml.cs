@@ -136,17 +136,63 @@ namespace FDMS.DatabaseTestClient
                 {
                     DALResult result = database.Insert(input.Record);
 
-                    if (!result.Success)
-                    {
-                        MessageBox.Show(result.FailureMessage);
-                    }
-                    else
+                    if (result.Success)
                     {
                         foreach (TextBox tb in insertInputConverters.Keys)
                         {
                             tb.Text = "";
                         }
                     }
+                    else
+                    {
+                        MessageBox.Show(result.FailureMessage);
+                    }
+                }
+            }
+        }
+
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (database.Connected)
+            {
+                AircraftTailNumSelectTextBox.BorderBrush = defaultBorderBrush;
+                object tailNum = ConvertAircraftTailNum(AircraftTailNumSelectTextBox.Text);
+
+                if (tailNum != null)
+                {
+                    DALSelectResult result = database.Select((string)tailNum);
+
+                    if (result.Success)
+                    {
+                        SelectedRecordsTextBox.Document.Blocks.Clear();
+                        foreach(TelemetryRecordDAL record in result.Records)
+                        {
+                            SelectedRecordsTextBox.AppendText(
+                                string.Format(
+                                    "{0}, {1}, {2:F6}, {3:F6}, {4:F6}, {5:F6}, {6:F6}, {7:F6}, {8:F6}",
+                                    record.Timestamp,
+                                    record.EntryTimestamp,
+                                    record.Accel_X,
+                                    record.Accel_Y,
+                                    record.Accel_Z,
+                                    record.Weight,
+                                    record.Altitude,
+                                    record.Pitch,
+                                    record.Bank
+                                )
+                            );
+                            SelectedRecordsTextBox.AppendText(Environment.NewLine);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(result.FailureMessage);
+                    }
+                }
+                else
+                {
+                    AircraftTailNumSelectTextBox.BorderBrush = Brushes.Red;
                 }
             }
         }
