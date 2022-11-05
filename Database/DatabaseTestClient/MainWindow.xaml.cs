@@ -20,9 +20,47 @@ namespace FDMS.DatabaseTestClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<Button> ConnectedButtons = new List<Button>();
+        private Dictionary<TextBox, Func<string, object>> InputConverters;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            ConnectedButtons.AddRange(new Button[] { DisconnectButton, InsertButton, SelectButton });
+            ConnectedButtons.ForEach(b => b.IsEnabled = false);
+
+            InputConverters = new Dictionary<TextBox, Func<string, object>>()
+            {
+                { AircraftTailNumTextBox, ConvertAircraftTailNum },
+                { TimestampTextBox, ConvertDateTime },
+                { AccelXTextBox, ConvertFloat },
+                { AccelYTextBox, ConvertFloat },
+                { AccelZTextBox, ConvertFloat },
+                { AltitudeTextBox, ConvertFloat },
+                { PitchTextBox, ConvertFloat },
+                { BankTextBox, ConvertFloat },
+                { AircraftTailNumSelectTextBox, ConvertAircraftTailNum }
+            };
         }
+
+        #region TextBox Validation Methods
+        
+        private static object ConvertAircraftTailNum(string input)
+        {
+            return !(String.IsNullOrWhiteSpace(input) || input.Length > 6) ? (object)input : null;
+        }
+
+        private static object ConvertFloat(string input)
+        {
+            return float.TryParse(input, out float output) ? output : (object)null;
+        }
+
+        private static object ConvertDateTime(string input)
+        {
+            return DateTime.TryParse(input, out DateTime output) ? output : (object)null;
+        }
+
+        #endregion
     }
 }

@@ -5,8 +5,120 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FDMS.DatabaseTestClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="700" Width="500">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="250"/>
+            <RowDefinition Height="240"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="10">
+            <StackPanel Width="300">
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Username" Grid.Column="0"/>
+                <TextBox x:Name="UsernameTextBox" Grid.Column="1"/>
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Password" Grid.Column="0"/>
+                <TextBox x:Name="PasswordTextBox" Grid.Column="1"/>
+            </Grid>
+                <Button x:Name="ConnectButton" Content="Connect" Margin="10" Width="160"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <StackPanel Margin="20">
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Aircraft Tail #" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="AircraftTailNumTextBox" Grid.Column="1"/>
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Timestamp" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="TimestampTextBox" Grid.Column="1" />
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Accel_X" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="AccelXTextBox" Grid.Column="1" />
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Accel_Y" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="AccelYTextBox" Grid.Column="1" />
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Accel_Z" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="AccelZTextBox" Grid.Column="1" />
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Altitude" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="AltitudeTextBox" Grid.Column="1" />
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Pitch" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="PitchTextBox" Grid.Column="1" />
+            </Grid>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Bank" HorizontalAlignment="Center" Grid.Column="0"/>
+                <TextBox x:Name="BankTextBox" Grid.Column="1" />
+            </Grid>
+                <Button x:Name="InsertButton" Content="Insert" Margin="10" Width="160"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2">
+            <StackPanel Margin="20">
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Aircraft Tail #" HorizontalAlignment="Center" Grid.Column="0"/>
+                    <TextBox x:Name="AircraftTailNumSelectTextBox" Grid.Column="1" />
+                </Grid>
+                <Button x:Name="SelectButton" Content="Select" Margin="10" Width="160"/>
+                <RichTextBox Height="120" Margin="10" IsReadOnly="True">
+                </RichTextBox>
+            </StackPanel>            
+        </Grid>
+        <Button Grid.Row="3" x:Name="DisconnectButton" Content="Disconnect" Margin="10" Width="160" VerticalAlignment="Center"/>
     </Grid>
 </Window>
