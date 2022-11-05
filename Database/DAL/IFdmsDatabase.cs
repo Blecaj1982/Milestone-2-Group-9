@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FDMS.DAL
 {
-    interface IFdmsDatabase
+    public interface IFdmsDatabase
     {
         DALResult Connect(string connectionString);
 
@@ -18,14 +18,43 @@ namespace FDMS.DAL
     }
 
 
-    public class DALSelectResult : DALResult
+    public class DALSelectResult
     {
+        public bool Success;
+        public string FailureMessage;
         public List<TelemetryRecordDAL> Records;
+
+        public DALSelectResult(string failureMessage)
+        {
+            Success = false;
+            Records = null;
+            FailureMessage = failureMessage;
+        }
+
+        public DALSelectResult(TelemetryRecordDAL[] records)
+        {
+            Success = true;
+            Records = records.ToList();
+            FailureMessage = "";
+        }
+
     }
 
     public class DALResult
     {
         public bool Success;
         public string FailureMessage;
+
+        public DALResult()
+        {
+            Success = true;
+            FailureMessage = "";
+        }
+
+        public DALResult(string failureMessage)
+        {
+            Success = false;
+            FailureMessage = failureMessage;
+        }
     }
 }
