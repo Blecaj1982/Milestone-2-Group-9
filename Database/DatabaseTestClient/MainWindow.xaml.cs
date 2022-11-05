@@ -18,13 +18,15 @@ using FDMS.DAL;
 
 namespace FDMS.DatabaseTestClient
 {
+    using InputConverter = Tuple<Func<string, object>, Action<object, TelemetryRecordDAL>>;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
         private List<Button> connectedButtons = new List<Button>();
-        private Dictionary<TextBox, Func<string, object>> inputConverters;
+        private Dictionary<TextBox, InputConverter> insertInputConverters;
         private Brush defaultBorderBrush;
 
         private FdmsDatabase database = new FdmsDatabase();
@@ -36,17 +38,16 @@ namespace FDMS.DatabaseTestClient
             connectedButtons.AddRange(new Button[] { DisconnectButton, InsertButton, SelectButton });
             connectedButtons.ForEach(b => b.IsEnabled = false);
 
-            inputConverters = new Dictionary<TextBox, Func<string, object>>()
+            insertInputConverters = new Dictionary<TextBox, Tuple<Func<string, object>, Action<object, TelemetryRecordDAL>>>()
             {
-                { AircraftTailNumTextBox, ConvertAircraftTailNum },
-                { TimestampTextBox, ConvertDateTime },
-                { AccelXTextBox, ConvertFloat },
-                { AccelYTextBox, ConvertFloat },
-                { AccelZTextBox, ConvertFloat },
-                { AltitudeTextBox, ConvertFloat },
-                { PitchTextBox, ConvertFloat },
-                { BankTextBox, ConvertFloat },
-                { AircraftTailNumSelectTextBox, ConvertAircraftTailNum }
+                { AircraftTailNumTextBox, new InputConverter(ConvertAircraftTailNum, (obj, rec) => rec.AircraftTailNum = (string)obj) },
+                { TimestampTextBox, new InputConverter(ConvertDateTime, (obj, rec)=> rec.Timestamp = (DateTime)obj)},
+                { AccelXTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Accel_X = (float)obj) },
+                { AccelYTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Accel_Y = (float)obj) },
+                { AccelZTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Accel_Z = (float)obj) },
+                { AltitudeTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Altitude = (float)obj) },
+                { PitchTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Pitch = (float)obj) },
+                { BankTextBox, new InputConverter(ConvertFloat, (obj, rec) => rec.Bank = (float)obj) },
             };
 
             defaultBorderBrush = UsernameTextBox.BorderBrush;
@@ -119,6 +120,63 @@ namespace FDMS.DatabaseTestClient
             connectedButtons.ForEach(b => b.IsEnabled = false);
         }
 
+        private void InsertButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(TextBox tb in insertInputConverters.Keys)
+            {
+                tb.BorderBrush = defaultBorderBrush;
+            }
+
+            if (database.Connected)
+            {
+                InsertInput input = ParseInsertInput();
+
+                if (input.Valid)
+                {
+                    DALResult result = database.Insert(input.Record);
+
+                    if (!result.Success)
+                    {
+                        MessageBox.Show(result.FailureMessage);
+                    }
+                    else
+                    {
+                        foreach (TextBox tb in insertInputConverters.Keys)
+                        {
+                            tb.Text = "";
+                        }
+                    }
+                }
+            }
+        }
+
+        private InsertInput ParseInsertInput()
+        {
+            bool valid = true;
+
+            TelemetryRecordDAL record = new TelemetryRecordDAL();
+
+            foreach(KeyValuePair<TextBox, InputConverter> kvp in insertInputConverters)
+            {
+                object convertedInput = kvp.Value.Item1(kvp.Key.Text);
+                if (convertedInput != null)
+                {
+                    kvp.Value.Item2(convertedInput, record); 
+                }
+                else
+                {
+                    kvp.Key.BorderBrush = Brushes.Red;
+                    valid = false;
+                }
+            }
+
+            return new InsertInput()
+            {
+                Valid = valid,
+                Record = record
+            };
+        }
+
         private ConnectionInput ParseConnectionInput()
         {
             bool valid = true;
@@ -169,6 +227,12 @@ namespace FDMS.DatabaseTestClient
             public string Password;
             public IPAddress IpAddress;
             public ushort Port;
+        }
+
+        private class InsertInput
+        {
+            public bool Valid;
+            public TelemetryRecordDAL Record;
         }
     }
 }

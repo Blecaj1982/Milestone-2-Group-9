@@ -10,7 +10,12 @@ namespace FDMS.DAL
     public class FdmsDatabase : IFdmsDatabase
     {
         public bool Connected { get; private set; } = false;
+
         private SqlConnection connection = null;
+
+        public FdmsDatabase()
+        {
+        }
         
         public DALResult Connect(string connectionString)
         {
@@ -64,7 +69,33 @@ namespace FDMS.DAL
 
         public DALResult Insert(TelemetryRecordDAL record)
         {
-            throw new NotImplementedException();
+            if (connection != null)
+            {
+                try
+                {
+                    using (SqlCommand com = connection.CreateCommand())
+                    {
+                        com.CommandText = "InsertTelemetry";
+                        com.CommandType = System.Data.CommandType.StoredProcedure;
+                        com.Parameters.AddWithValue("@Aircraft_Tail_Num", record.AircraftTailNum);
+                        com.Parameters.AddWithValue("@Timestamp", record.Timestamp);
+                        com.Parameters.AddWithValue("@Accel_X", record.Accel_X);
+                        com.Parameters.AddWithValue("@Accel_Y", record.Accel_Y);
+                        com.Parameters.AddWithValue("@Accel_Z", record.Accel_Z);
+                        com.Parameters.AddWithValue("@Altitude", record.Altitude);
+                        com.Parameters.AddWithValue("@Pitch", record.Pitch);
+                        com.Parameters.AddWithValue("@Bank", record.Bank);
+
+                        return com.ExecuteNonQuery() > 0 ? new DALResult() : new DALResult("No rows affected.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new DALResult(ex.Message);
+                }
+            }
+
+            return new DALResult("Connection is not open.");
         }
 
         public DALSelectResult Select(string aircraftTailNum)

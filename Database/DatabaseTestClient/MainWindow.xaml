@@ -59,7 +59,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Aircraft Tail #" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="AircraftTailNumTextBox" Grid.Column="1"/>
+                <TextBox x:Name="AircraftTailNumTextBox" Grid.Column="1" Text="C-QWWT"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -67,7 +67,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Timestamp" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="TimestampTextBox" Grid.Column="1" />
+                <TextBox x:Name="TimestampTextBox" Grid.Column="1" Text="9-5-2018 9:40:57"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -75,7 +75,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Accel_X" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="AccelXTextBox" Grid.Column="1" />
+                <TextBox x:Name="AccelXTextBox" Grid.Column="1" Text="-0.022142"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -83,7 +83,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Accel_Y" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="AccelYTextBox" Grid.Column="1" />
+                <TextBox x:Name="AccelYTextBox" Grid.Column="1" Text="0.058109"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -91,7 +91,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Accel_Z" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="AccelZTextBox" Grid.Column="1" />
+                <TextBox x:Name="AccelZTextBox" Grid.Column="1" Text="0.345075"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -99,7 +99,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Altitude" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="AltitudeTextBox" Grid.Column="1" />
+                <TextBox x:Name="AltitudeTextBox" Grid.Column="1" Text="2252.778320"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -107,7 +107,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Pitch" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="PitchTextBox" Grid.Column="1" />
+                <TextBox x:Name="PitchTextBox" Grid.Column="1" Text="3987.080556"/>
             </Grid>
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
@@ -115,9 +115,9 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Bank" HorizontalAlignment="Center" Grid.Column="0"/>
-                <TextBox x:Name="BankTextBox" Grid.Column="1" />
+                <TextBox x:Name="BankTextBox" Grid.Column="1" Text="9.9"/>
             </Grid>
-                <Button x:Name="InsertButton" Content="Insert" Margin="10" Width="160"/>
+                <Button x:Name="InsertButton" Content="Insert" Margin="10" Width="160" Click="InsertButton_Click"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="2">

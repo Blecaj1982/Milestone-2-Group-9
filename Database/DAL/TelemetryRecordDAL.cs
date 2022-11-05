@@ -17,6 +17,8 @@ namespace FDMS.DAL
         public float Pitch;
         public float Bank;
 
+        public TelemetryRecordDAL() { }
+
         public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, float accel_X, float accel_Y, float accel_Z, float altitude, float pitch, float bank)
         {
             AircraftTailNum = aircraftTailNum;
