@@ -6,3 +6,6 @@
 /Database/.vs/Database/v16
 /Database/Server/bin/Debug
 /Database/Server/obj/Debug
+/Database/DatabaseTestClient/bin/Debug
+/Database/DatabaseTestClient/obj
+/Database/DAL/obj
