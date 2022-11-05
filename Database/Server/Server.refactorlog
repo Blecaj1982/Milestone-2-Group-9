@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="dfc7ed66-da71-4872-ba69-e54584c3442a" ChangeDateTime="11/05/2022 01:58:58">
+    <Property Name="ElementName" Value="[dbo].[Table1].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Table1]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Telemetry_ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c87bd1f3-a91e-4406-a427-93b166f0aca0" ChangeDateTime="11/05/2022 01:59:39">
+    <Property Name="ElementName" Value="[dbo].[Table1].[Entry_Timestapm]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Table1]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Entry_Timestamp" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d1784667-a409-4bc2-8964-56201bd75b40" ChangeDateTime="11/05/2022 02:00:33">
+    <Property Name="ElementName" Value="[FDMS].[Telemetry_Records].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[FDMS].[Telemetry_Records]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Telemetry_ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="869071b4-bd99-4179-9382-0e96d84d1a72" ChangeDateTime="11/05/2022 02:03:46">
+    <Property Name="ElementName" Value="[FDMS].[Altitude_Parameters].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[FDMS].[Altitude_Parameters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Telemetry_ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="81aa7dcf-7ac6-4595-9d3b-ab9608a08821" ChangeDateTime="11/05/2022 02:06:52">
+    <Property Name="ElementName" Value="[FDMS].[G_Force_Parameters].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[FDMS].[G_Force_Parameters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Telemetry_ID" />
+  </Operation>
+</Operations>

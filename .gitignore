@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs
+/Database/.vs/Database/v16
+/Database/Server/bin/Debug
+/Database/Server/obj/Debug
