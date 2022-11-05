@@ -25,11 +25,11 @@ namespace FDMS.DatabaseTestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<Button> connectedButtons = new List<Button>();
-        private Dictionary<TextBox, InputConverter> insertInputConverters;
-        private Brush defaultBorderBrush;
+        private readonly List<Button> connectedButtons = new List<Button>();
+        private readonly Dictionary<TextBox, InputConverter> insertInputConverters;
+        private readonly Brush defaultBorderBrush;
 
-        private FdmsDatabase database = new FdmsDatabase();
+        private readonly FdmsDatabase database = new FdmsDatabase();
 
         public MainWindow()
         {
