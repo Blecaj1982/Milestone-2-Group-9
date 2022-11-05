@@ -136,7 +136,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Aircraft Tail #" HorizontalAlignment="Center" Grid.Column="0"/>
-                    <TextBox x:Name="AircraftTailNumSelectTextBox" Grid.Column="1" />
+                    <TextBox x:Name="AircraftTailNumSelectTextBox" Grid.Column="1" Text="C-QWWT"/>
                 </Grid>
                 <Button x:Name="SelectButton" Content="Select" Margin="10" Width="160" Click="SelectButton_Click"/>
                 <RichTextBox x:Name="SelectedRecordsTextBox" Height="120" Margin="10" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
