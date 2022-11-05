@@ -68,5 +68,7 @@
     <Build Include="Altitude_Parameters.sql" />
     <Build Include="G_Force_Parameters.sql" />
     <Build Include="FDMS_User.sql" />
+    <Build Include="InsertTelemetry.sql" />
+    <Build Include="Telemetry_View.sql" />
   </ItemGroup>
 </Project>
