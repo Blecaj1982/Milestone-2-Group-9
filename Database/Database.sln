@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseTestClient", "DatabaseTestClient\DatabaseTestClient.csproj", "{BDA66820-9E99-415F-9EFA-5725F2DDA3B4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EADC15E-FC0B-4956-B407-2B1C54632243}"
+	ProjectSection(SolutionItems) = preProject
+		DeployServer.bat = DeployServer.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
