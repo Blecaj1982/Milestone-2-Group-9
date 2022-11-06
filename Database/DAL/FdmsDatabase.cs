@@ -4,17 +4,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace FDMS.DAL
 {
     public class FdmsDatabase : IFdmsDatabase
     {
         public bool Connected { get; private set; } = false;
-
         private SqlConnection connection = null;
 
         public FdmsDatabase()
         {
+        }
+
+        public DALResult Connect(IPAddress ip, ushort port, string username, string password)
+        {
+            return Connect(
+                $"Data Source={ip},{port};" +
+                $"Database=FDMS_Server;" +
+                $"User ID={username};" +
+                $"Password={password};"
+            );
         }
         
         public DALResult Connect(string connectionString)
@@ -99,7 +109,7 @@ namespace FDMS.DAL
             return new DALResult("Connection is not open.");
         }
 
-        public DALSelectResult Select(string aircraftTailNum)
+        public DALSelectResult Select(string aircraftTailNum, int n = 100)
         {
             if (connection != null)
             {
@@ -108,7 +118,9 @@ namespace FDMS.DAL
                     List<TelemetryRecordDAL> records = new List<TelemetryRecordDAL>();
                     using (SqlCommand com = connection.CreateCommand())
                     {
-                        com.CommandText = "SELECT * FROM Telemetry_View WHERE @tailNum = Aircraft_Tail_Num";
+                        // NEED TO Interpolate parameter n into command string, it will not work as a parameter
+                        com.CommandText =
+                            $"SELECT TOP {n} * FROM Telemetry_View WHERE (@tailNum) = Aircraft_Tail_Num ORDER BY Telemetry_ID Desc";
                         com.Parameters.AddWithValue("@tailNum", aircraftTailNum);
 
                         using (SqlDataReader reader = com.ExecuteReader())

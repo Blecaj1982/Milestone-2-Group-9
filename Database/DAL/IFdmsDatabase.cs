@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,11 +9,12 @@ namespace FDMS.DAL
 {
     public interface IFdmsDatabase
     {
+        DALResult Connect(IPAddress ip, ushort port, string username, string password);
         DALResult Connect(string connectionString);
 
         DALResult Insert(TelemetryRecordDAL record);
 
-        DALSelectResult Select(string aircraftTailNum);
+        DALSelectResult Select(string aircraftTailNum, int n = 100);
 
         DALResult Disconnect();
     }

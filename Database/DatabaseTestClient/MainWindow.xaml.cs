@@ -85,13 +85,7 @@ namespace FDMS.DatabaseTestClient
                 ConnectionInput input = ParseConnectionInput();
                 if (input.Valid)
                 {
-                    string connectionStr =
-                        $"Data Source={input.IpAddress},{input.Port};" +
-                        $"Database=FDMS_Server;" +
-                        $"User ID={input.Username};" +
-                        $"Password={input.Password};";
-
-                    DALResult result = database.Connect(connectionStr);
+                    DALResult result = database.Connect(input.IpAddress, input.Port, input.Username, input.Password);
 
                     if (result.Success && database.Connected)
                     {
