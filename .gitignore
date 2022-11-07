@@ -12,3 +12,5 @@
 /Database/packages
 /Database/DAL/bin/Debug
 /Database/MigrationBackup/e18da7b8/DAL
+/Database/Tests/bin/Debug
+/Database/Tests/obj
