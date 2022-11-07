@@ -1,0 +1,17 @@
+﻿<Window x:Class="GroundTerminalSystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GroundTerminalSystem"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize">
+    <Grid>
+        <RadioButton x:Name="RealTimeModeOn" Content="On" HorizontalAlignment="Left" Margin="558,79,0,0" VerticalAlignment="Top" Checked="RealTimeModeOn_Checked"/>
+        <RadioButton x:Name="RealTimeModeOff" Content="Off" HorizontalAlignment="Left" Margin="558,99,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.829,3.835" Checked="RealTimeModeOff_Checked"/>
+        <Label x:Name="label" Content="Mode of Operation:" HorizontalAlignment="Left" Margin="552,31,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2" Content="realTime:" HorizontalAlignment="Left" Margin="552,53,0,0" VerticalAlignment="Top"/>
+        <!--<RadioButton x:Name="QueryMode" Content="RadioButton" HorizontalAlignment="Left" Margin="552,88,0,0" VerticalAlignment="Top"/>-->
+
+    </Grid>
+</Window>
