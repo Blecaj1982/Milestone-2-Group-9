@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace FDMS.DAL
 {
+    /// <summary>
+    /// Interface for an object that communicates with an FDMS database
+    /// </summary>
     public interface IFdmsDatabase
     {
         DALResult Connect(IPAddress ip, ushort port, string username, string password);
@@ -20,6 +23,14 @@ namespace FDMS.DAL
     }
 
 
+    /// <summary>
+    /// Encapsulates the result of a Select operation performed by the
+    /// FdmsDatabase. Its Success field indicates if the Select operation was
+    /// successful, and if so then the REcords field will be populated with the
+    /// retrieved records. Otherwise, if the success field is fales, then the
+    /// Failure message field will contain a description of the error that
+    /// occurred
+    /// </summary>
     public class DALSelectResult
     {
         public bool Success;
@@ -42,6 +53,12 @@ namespace FDMS.DAL
 
     }
 
+    /// <summary>
+    /// Encapsulates the result of an operation performed by the FdmsDatabase.
+    /// Its Success field indicates if a FdmsDatabase operation was successful.
+    /// If false, then the FailureMessage field will contain a description of
+    /// the error that occurred.
+    /// </summary>
     public class DALResult
     {
         public bool Success;

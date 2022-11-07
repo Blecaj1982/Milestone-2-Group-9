@@ -8,6 +8,9 @@ using System.IO;
 
 namespace Tests
 {
+    /// <summary>
+    /// Contains tests for the FdmsDatbase class
+    /// </summary>
     [TestClass]
     public class FdmsDatabaseTests
     {
@@ -16,6 +19,10 @@ namespace Tests
         public static List<TelemetryRecordDAL> TestData = new List<TelemetryRecordDAL>();
 
 
+        /// <summary>
+        /// Setup code to run before all tests. Connects the FdmsDatabase under
+        /// test to a local database then reads in and stores testing data
+        /// </summary>
         [AssemblyInitialize]
         public static void Setup(TestContext context)
         {
@@ -55,12 +62,18 @@ namespace Tests
             }
         }
 
+        /// <summary>
+        /// Runs after all tests. Closes the FdmsDatabase connection
+        /// </summary>
         [AssemblyCleanup]
         public static void Cleanup()
         {
             db.Disconnect();
         }
 
+        /// <summary>
+        /// Tests that FdmsDatabase can insert multiple records
+        /// </summary>
         [TestMethod]
         [DoNotParallelize]
         public void Insert_CanInsertMultipleRecords()
@@ -72,6 +85,10 @@ namespace Tests
             }
         }
 
+        /// <summary>
+        /// Tests that after inserting a record into the database, the
+        /// FdmsDatabase class can find it
+        /// </summary>
         [TestMethod]
         [DoNotParallelize]
         public void Insert_InsertedRecordsEndsUpInDatabase()
@@ -98,6 +115,10 @@ namespace Tests
             Assert.IsTrue(EquateRecords(recordToInsert, selectResult.Records[0]));
         }
 
+        /// <summary>
+        /// Tests that limit parameter of the Select method limits the number
+        /// of records returned
+        /// </summary>
         [TestMethod]
         [DoNotParallelize]
         public void Select_LimitOfOneWorks()
@@ -113,6 +134,10 @@ namespace Tests
             Assert.IsTrue(selectResult.Records.Count == 1);
         }
 
+        /// <summary>
+        /// Tests that limit parameter of the Select method limits the number
+        /// of records returned
+        /// </summary>
         [TestMethod]
         [DoNotParallelize]
         public void Select_LimitOfTwoWorks()
@@ -130,6 +155,9 @@ namespace Tests
             Assert.IsTrue(selectResult.Records.Count == 2);
         }
 
+        /// <summary>
+        /// Tests that Select returns the latest records inserted into an FdmsDatabase
+        /// </summary>
         [TestMethod]
         [DoNotParallelize]
         public void Select_RetrievesLatestInsertedRecords()
@@ -154,6 +182,9 @@ namespace Tests
             }
         }
 
+        /// <summary>
+        /// Tests that Select returned records with the correct tail number
+        /// </summary>
         [TestMethod]
         [DoNotParallelize]
         public void Select_RetrievesCorrectTailNum()
@@ -169,6 +200,13 @@ namespace Tests
             Assert.AreEqual(recordToInsert.AircraftTailNum, selectResult.Records[0].AircraftTailNum);
         }
 
+        /// <summary>
+        /// Used for comparing the fields of two records except for their EntryTimestamp fields
+        /// </summary>
+        /// <returns>
+        /// True if every field of two TelemetryRecordDALs are equal while
+        /// ignoring their EntryTimestamp fields
+        /// </returns>
         public static bool EquateRecords(TelemetryRecordDAL recordA, TelemetryRecordDAL recordB)
         {
             return
