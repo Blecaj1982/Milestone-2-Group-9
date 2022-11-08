@@ -46,8 +46,9 @@ namespace GroundTerminalSystem
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             DatabaseSearch dbs = new DatabaseSearch();
-            DataShow.ItemsSource = dbs.dbaseSearch(txtSearch.Text).DefaultView;
-
+            var dt = dbs.dbaseSearch(txtSearch.Text).DefaultView;
+            DataShow.ItemsSource = dt;
+            DataShow.Items.Refresh();
         }
     }
 }
