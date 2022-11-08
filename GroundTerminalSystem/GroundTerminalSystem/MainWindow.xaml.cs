@@ -42,5 +42,12 @@ namespace GroundTerminalSystem
         {
             RealTimeModeOff.IsChecked = false;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            DatabaseSearch dbs = new DatabaseSearch();
+            DataShow.ItemsSource = dbs.dbaseSearch(txtSearch.Text).DefaultView;
+
+        }
     }
 }

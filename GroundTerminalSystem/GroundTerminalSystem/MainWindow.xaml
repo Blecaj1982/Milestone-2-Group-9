@@ -11,6 +11,9 @@
         <RadioButton x:Name="RealTimeModeOff" Content="Off" HorizontalAlignment="Left" Margin="558,99,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.829,3.835" Checked="RealTimeModeOff_Checked"/>
         <Label x:Name="label" Content="Mode of Operation:" HorizontalAlignment="Left" Margin="552,31,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="realTime:" HorizontalAlignment="Left" Margin="552,53,0,0" VerticalAlignment="Top"/>
+        <DataGrid x:Name="DataShow"  HorizontalAlignment="Left" Margin="100,99,0,0" VerticalAlignment="Top" Height="101" Width="323"/>
+        <TextBox x:Name="txtSearch" HorizontalAlignment="Left" Margin="122,48,0,0" TextWrapping="Wrap" Text="Type to Search" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Search" HorizontalAlignment="Left" Margin="258,47,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.098,-0.235" Click="Button_Click"/>
         <!--<RadioButton x:Name="QueryMode" Content="RadioButton" HorizontalAlignment="Left" Margin="552,88,0,0" VerticalAlignment="Top"/>-->
 
     </Grid>
