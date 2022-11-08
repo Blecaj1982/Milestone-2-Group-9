@@ -1,0 +1,82 @@
+﻿<Page x:Class="GroundTerminalSystem.DatabaseInfo"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GroundTerminalSystem"
+      xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DatabaseInfo">
+
+    <Grid>
+        <Grid Background="#e8eaf6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <!--Screen Title-->
+            <Grid >
+                <TextBlock Text="Data Base Search" Style="{StaticResource DatabaseSearchTitle}" />
+            </Grid>
+
+            <Grid Grid.Row="1"  Margin="5 10 0 0 ">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!--Search box-->
+                <TextBox Name="SearchTextBox" Width="250" Style="{StaticResource SearchTextBox}"/>
+                <!--Search button-->
+                <Button Grid.Column="1" x:Name="SearchButton" Width="100" Style="{StaticResource DataBaseScreenButtons}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="Search" Style="{StaticResource DatabaseButtonIcons}"/>
+                        <TextBlock Text="Search" Style="{StaticResource DatabaseButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <!--Write to file button-->
+                <Button Grid.Column="2" x:Name="LogButton" Margin="190 0 0 0" Style="{StaticResource DataBaseScreenButtons}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="File" Style="{StaticResource DatabaseButtonIcons}"/>
+                        <TextBlock Text="Write to file" Style="{StaticResource DatabaseButtonText}"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!--Database View-->
+            <Grid Grid.Row="2" Margin="0, 15, 0, 0" Background="#e8eaf6" >
+                <ScrollViewer>
+                    <ListView x:Name="DatabaseView" 
+                              HorizontalAlignment="Center" 
+                              Background="#e8eaf6"
+                              Width="750" 
+                              Height="680" 
+                              Margin="5,0,0,0" 
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ScrollViewer.CanContentScroll="True"
+                    >
+                        <ListView.View>
+                            <GridView x:Name="DatabaseFlightDataGrid" ColumnHeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
+                                <GridViewColumn Header="TailID" Width="83"/>
+                                <GridViewColumn Header="Timestamp" Width="83"/>
+                                <GridViewColumn Header="Accel-X" Width="83"/>
+                                <GridViewColumn Header="Accel-Y" Width="83"/>
+                                <GridViewColumn Header="Accel-Z" Width="83"/>
+                                <GridViewColumn Header="Weight" Width="83"/>
+                                <GridViewColumn Header="Altitude" Width="83"/>
+                                <GridViewColumn Header="Pitch" Width="83"/>
+                                <GridViewColumn Header="Bank" Width="83"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

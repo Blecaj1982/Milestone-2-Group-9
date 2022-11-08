@@ -4,17 +4,113 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GroundTerminalSystem"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize">
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Height="750" Width="950"
+        Title="Flight Data Management System"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
     <Grid>
-        <RadioButton x:Name="RealTimeModeOn" Content="On" HorizontalAlignment="Left" Margin="558,79,0,0" VerticalAlignment="Top" Checked="RealTimeModeOn_Checked"/>
+
+        <!-- Dremo and Beunard had for the UI part -->
+
+        <!--<RadioButton x:Name="RealTimeModeOn" Content="On" HorizontalAlignment="Left" Margin="558,79,0,0" VerticalAlignment="Top" Checked="RealTimeModeOn_Checked"/>
         <RadioButton x:Name="RealTimeModeOff" Content="Off" HorizontalAlignment="Left" Margin="558,99,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.829,3.835" Checked="RealTimeModeOff_Checked"/>
         <Label x:Name="label" Content="Mode of Operation:" HorizontalAlignment="Left" Margin="552,31,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="realTime:" HorizontalAlignment="Left" Margin="552,53,0,0" VerticalAlignment="Top"/>
         <DataGrid x:Name="DataShow"  HorizontalAlignment="Left" Margin="100,99,0,0" VerticalAlignment="Top" Height="101" Width="323"/>
         <TextBox x:Name="txtSearch" HorizontalAlignment="Left" Margin="122,48,0,0" TextWrapping="Wrap" Text="Type to Search" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Search" HorizontalAlignment="Left" Margin="258,47,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.098,-0.235" Click="Button_Click"/>
+        <Button Content="Search" HorizontalAlignment="Left" Margin="258,47,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.098,-0.235" Click="Button_Click"/>-->
         <!--<RadioButton x:Name="QueryMode" Content="RadioButton" HorizontalAlignment="Left" Margin="552,88,0,0" VerticalAlignment="Top"/>-->
 
+        <!-- end part -->
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="180"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--left part of the screen-->
+        <Border CornerRadius="10 0 0 0" MouseDown="OnBorderMouseDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5, 0" EndPoint="0.5,1">
+                    <GradientStop Color="#3949ab" Offset="0"/>
+                    <GradientStop Color="#3949ab" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <TextBlock Text="Flight Data Management System" Style="{StaticResource SystemTitle}"/>
+        </Border>
+
+        <!--The main frame-->
+        <Border Grid.Row="1" CornerRadius="0 0 0 10" MouseDown="OnBorderMouseDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5, 0" EndPoint="0.5,1">
+                    <GradientStop Color="#e8eaf6" Offset="0"/>
+                    <GradientStop Color="#e8eaf6" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Frame x:Name="mainPanel" Margin="10, 10, 10, 10" NavigationUIVisibility="Hidden"/>
+        </Border>
+        <!--Left part end-->
+
+        <!--right menu-->
+        <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 10 10 0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5, 0" EndPoint="0.5,1">
+                    <GradientStop Color="#3949ab" Offset="0"/>
+                    <GradientStop Color="#383875" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <StackPanel>
+                <!--Live Connection Menu-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin ="0 35 0 0" Width="180">
+                    <Button x:Name="LiveConnectionButton" Style="{StaticResource SideMenuButton}" Click="LiveConnectionButtonOnClick">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="TowerBroadcast" Foreground ="#64d8cb" Style="{StaticResource SideMenuButtonIcon}"/>
+                            <TextBlock Text="Live Connection" Style="{StaticResource SideMenuButtonText}"></TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <!--Database Query Menu-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin ="0 15 0 0"  Width="180">
+                    <Button x:Name="QueryDatabaseButton" Style="{StaticResource SideMenuButton}"  Click="QueryDatabaseButtonOnClick">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Database" Foreground ="#fbc02d" Style="{StaticResource SideMenuButtonIcon}"/>
+                            <TextBlock Text="Query Database" Style="{StaticResource SideMenuButtonText}"></TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <Separator Height="0.8" Background="#e3f2fd" Margin="20 30 20 10"/>
+
+                <!--Connection Button-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin ="0 10 0 0" Width="180">
+                    <Button x:Name="ConnectionButton" Style="{StaticResource SideMenuButton}" Click="ConnectionButtonOnClick">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage x:Name="SignalIcon" Icon="Signal" Foreground ="#757575" Style="{StaticResource SideMenuButtonIcon}"/>
+                            <TextBlock x:Name="ConnectionText" Text="Connection Off" Style="{StaticResource SideMenuButtonText}"></TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+
+                <!--Quit Button-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin ="0 390 0 0" Width="180">
+                    <Button Style="{StaticResource SideMenuButton}" Click="QuitButtonOnClick">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Xmark" Foreground ="#ff80ab" Style="{StaticResource SideMenuButtonIcon}"/>
+                            <TextBlock Text="Quit" Style="{StaticResource SideMenuButtonText}"></TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <!--menu end-->
     </Grid>
 </Window>
