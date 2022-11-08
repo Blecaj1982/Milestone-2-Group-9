@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GroundTerminalSystem.classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,15 @@ namespace GroundTerminalSystem
         public DatabaseInfo()
         {
             InitializeComponent();
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            DatabaseSearch dbs = new DatabaseSearch();
+
+            var records = dbs.dbaseSearch(SearchTextBox.Text);
+            DatabaseView.ItemsSource = records;
+            DatabaseView.Items.Refresh();
         }
     }
 }

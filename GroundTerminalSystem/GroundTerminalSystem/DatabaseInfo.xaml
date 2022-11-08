@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:GroundTerminalSystem"
       xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -33,7 +32,7 @@
                 <!--Search box-->
                 <TextBox Name="SearchTextBox" Width="250" Style="{StaticResource SearchTextBox}"/>
                 <!--Search button-->
-                <Button Grid.Column="1" x:Name="SearchButton" Width="100" Style="{StaticResource DataBaseScreenButtons}">
+                <Button Grid.Column="1" x:Name="SearchButton" Width="100" Style="{StaticResource DataBaseScreenButtons}" Click="SearchButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="Search" Style="{StaticResource DatabaseButtonIcons}"/>
                         <TextBlock Text="Search" Style="{StaticResource DatabaseButtonText}"/>
@@ -60,18 +59,18 @@
                               Margin="5,0,0,0" 
                               ScrollViewer.VerticalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="True"
-                    >
+                              >
                         <ListView.View>
                             <GridView x:Name="DatabaseFlightDataGrid" ColumnHeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
-                                <GridViewColumn Header="TailID" Width="83"/>
-                                <GridViewColumn Header="Timestamp" Width="83"/>
-                                <GridViewColumn Header="Accel-X" Width="83"/>
-                                <GridViewColumn Header="Accel-Y" Width="83"/>
-                                <GridViewColumn Header="Accel-Z" Width="83"/>
-                                <GridViewColumn Header="Weight" Width="83"/>
-                                <GridViewColumn Header="Altitude" Width="83"/>
-                                <GridViewColumn Header="Pitch" Width="83"/>
-                                <GridViewColumn Header="Bank" Width="83"/>
+                            <GridViewColumn Header="TailID" Width="83" DisplayMemberBinding="{Binding Path=AircraftTailNum}"/>
+                                <GridViewColumn Header="Timestamp" Width="83" DisplayMemberBinding="{Binding Path=Timestamp}"/>
+                                <GridViewColumn Header="Accel-X" Width="83" DisplayMemberBinding="{Binding Path=Accel_X}"/>
+                                <GridViewColumn Header="Accel-Y" Width="83" DisplayMemberBinding="{Binding Path=Accel_Y}" />
+                                <GridViewColumn Header="Accel-Z" Width="83" DisplayMemberBinding="{Binding Path=Accel_Z}" />
+                                <GridViewColumn Header="Weight" Width="83" DisplayMemberBinding="{Binding Path=Weight}" />
+                                <GridViewColumn Header="Altitude" Width="83" DisplayMemberBinding="{Binding Path=Altitude}" />
+                                <GridViewColumn Header="Pitch" Width="83" DisplayMemberBinding="{Binding Path=Pitch}" />
+                                <GridViewColumn Header="Bank" Width="83" DisplayMemberBinding="{Binding Path=Bank}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
