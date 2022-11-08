@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
 using GroundTerminalSystem;
 
 namespace GroundTerminalSystem.classes
