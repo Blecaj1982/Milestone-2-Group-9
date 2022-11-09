@@ -55,5 +55,10 @@ namespace FDMS.DAL
             Pitch = pitch;
             Bank = bank;
         }
+
+        public override string ToString()
+        {
+            return $"{AircraftTailNum},{Timestamp},{Accel_X:N6},{Accel_Y:N6},{Accel_Z:N6},{Weight:N6},{Altitude:N6},{Pitch:N6},{Bank:N6}";
+        }
     }
 }

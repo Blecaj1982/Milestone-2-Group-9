@@ -19,7 +19,7 @@
 
         <!--Database View-->
         <Grid Grid.Row="1" Margin="0, 0, 0, 0" Background="#e8eaf6" >
-            <ScrollViewer>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <ListView x:Name="LiveConnectionDataView" 
                           HorizontalAlignment="Center" 
                           Background="#e8eaf6"

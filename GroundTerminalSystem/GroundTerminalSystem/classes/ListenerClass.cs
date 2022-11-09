@@ -99,6 +99,8 @@ namespace GroundTerminalSystem.classes
                 );
 
                 db.Insert(record);
+
+                data = "";
             }
         }
 

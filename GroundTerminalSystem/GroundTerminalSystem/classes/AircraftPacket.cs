@@ -44,28 +44,28 @@ namespace GroundTerminalSystem.classes
 
             Timestamp = DateTime.Parse(FlightInfo[2].Replace('_', '-'));
 
-            float.TryParse(FlightInfo[2], out tempParse);
+            float.TryParse(FlightInfo[3], out tempParse);
             Accel_X = tempParse;
 
-            float.TryParse(FlightInfo[3], out tempParse);
+            float.TryParse(FlightInfo[4], out tempParse);
             Accel_Y = tempParse;
 
-            float.TryParse(FlightInfo[4], out tempParse);
+            float.TryParse(FlightInfo[5], out tempParse);
             Accel_Z = tempParse;
 
-            float.TryParse(FlightInfo[5], out tempParse);
+            float.TryParse(FlightInfo[6], out tempParse);
             Weight = tempParse;
 
-            float.TryParse(FlightInfo[6], out tempParse);
+            float.TryParse(FlightInfo[7], out tempParse);
             Altitude = tempParse;
 
-            float.TryParse(FlightInfo[7], out tempParse);
+            float.TryParse(FlightInfo[8], out tempParse);
             Pitch = tempParse;
 
-            float.TryParse(FlightInfo[8], out tempParse);
+            float.TryParse(FlightInfo[9], out tempParse);
             Bank = tempParse;
 
-            float.TryParse(FlightInfo[9], out tempParse);
+            float.TryParse(FlightInfo[10], out tempParse);
             Checksum = tempParse;
         }
 
