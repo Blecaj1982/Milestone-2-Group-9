@@ -45,7 +45,7 @@ namespace GroundTerminalSystem
                        {
                            Dispatcher.Invoke(() =>
                            {
-                               Records.Add(r);
+                               Records.Insert(0, r);
                                liveConnectionPage.LiveConnectionDataView.Items.Refresh();
                            });
                        });
