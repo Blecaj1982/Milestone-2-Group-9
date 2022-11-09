@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GroundTerminalSystem;
 using FDMS.DAL;
+using System.IO;
 
 namespace GroundTerminalSystem.classes
 {
@@ -27,6 +28,10 @@ namespace GroundTerminalSystem.classes
 
                 if (selectResult.Success)
                 {
+                    using (StreamWriter logTele = new StreamWriter("TelemetryLog.txt", true))
+                    {
+                        logTele.WriteLine(selectResult.Records.ToString());
+                    }
                     return selectResult.Records;
                 }
                 else
