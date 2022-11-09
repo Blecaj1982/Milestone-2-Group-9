@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using FDMS.DAL;
 
 namespace GroundTerminalSystem
 {
@@ -27,6 +28,7 @@ namespace GroundTerminalSystem
         LiveConnection liveConnectionPage = new LiveConnection();
         DatabaseInfo databaseInfoPage = new DatabaseInfo();
         bool isConnected = false;
+        List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
 
         public MainWindow()
         {
@@ -35,9 +37,22 @@ namespace GroundTerminalSystem
             LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
             mainPanel.Content = liveConnectionPage;
 
-            Thread ListenerThread = new Thread(serverListener.ListenForConnection);
-            ListenerThread.Start();
+            liveConnectionPage.LiveConnectionDataView.ItemsSource = Records;
+            Thread ListenerThread = new Thread(
+                () => 
+                {
+                    serverListener.ListenForConnection((r) =>
+                       {
+                           Dispatcher.Invoke(() =>
+                           {
+                               Records.Add(r);
+                               liveConnectionPage.LiveConnectionDataView.Items.Refresh();
+                           });
+                       });
+                }
+                );
 
+            ListenerThread.Start();
         }
 
         private void OnBorderMouseDown(object sender, MouseButtonEventArgs e)

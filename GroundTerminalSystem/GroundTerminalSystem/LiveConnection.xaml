@@ -32,15 +32,15 @@
                 >
                     <ListView.View>
                         <GridView x:Name="LiveConnectionFlightDataGrid" ColumnHeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
-                            <GridViewColumn Header="TailID" Width="83"/>
-                            <GridViewColumn Header="Timestamp" Width="83"/>
-                            <GridViewColumn Header="Accel-X" Width="83"/>
-                            <GridViewColumn Header="Accel-Y" Width="83"/>
-                            <GridViewColumn Header="Accel-Z" Width="83"/>
-                            <GridViewColumn Header="Weight" Width="83"/>
-                            <GridViewColumn Header="Altitude" Width="83"/>
-                            <GridViewColumn Header="Pitch" Width="83"/>
-                            <GridViewColumn Header="Bank" Width="83"/>
+                            <GridViewColumn Header="TailID" Width="83" DisplayMemberBinding="{Binding Path=AircraftTailNum}"/>
+                            <GridViewColumn Header="Timestamp" Width="83" DisplayMemberBinding="{Binding Path=Timestamp}"/>
+                            <GridViewColumn Header="Accel-X" Width="83" DisplayMemberBinding="{Binding Path=Accel_X}"/>
+                            <GridViewColumn Header="Accel-Y" Width="83" DisplayMemberBinding="{Binding Path=Accel_Y}" />
+                            <GridViewColumn Header="Accel-Z" Width="83" DisplayMemberBinding="{Binding Path=Accel_Z}" />
+                            <GridViewColumn Header="Weight" Width="83" DisplayMemberBinding="{Binding Path=Weight}" />
+                            <GridViewColumn Header="Altitude" Width="83" DisplayMemberBinding="{Binding Path=Altitude}" />
+                            <GridViewColumn Header="Pitch" Width="83" DisplayMemberBinding="{Binding Path=Pitch}" />
+                            <GridViewColumn Header="Bank" Width="83" DisplayMemberBinding="{Binding Path=Bank}" />
                         </GridView>
                     </ListView.View>
                 </ListView>

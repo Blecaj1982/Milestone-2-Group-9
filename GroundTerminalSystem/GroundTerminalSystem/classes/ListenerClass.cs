@@ -30,7 +30,7 @@ namespace GroundTerminalSystem.classes
             aircraftPacket = new AircraftPacket();
         }
 
-        public void ListenForConnection()
+        public void ListenForConnection(Action<TelemetryRecordDAL> OnPacketRecieved)
         {
             Console.WriteLine("listening");
 
@@ -52,7 +52,7 @@ namespace GroundTerminalSystem.classes
                     handler = listenerSocket.Accept();
                     if(handler != null)
                     {
-                        Thread packetThread = new Thread(() => RecievePacket(handler));
+                        Thread packetThread = new Thread(() => RecievePacket(handler, OnPacketRecieved));
                         packetThread.Start();
                     }             
                 }
@@ -64,7 +64,7 @@ namespace GroundTerminalSystem.classes
             Console.WriteLine("done");
         }
 
-        void RecievePacket(object obj)
+        void RecievePacket(object obj, Action<TelemetryRecordDAL> OnPacketRecieved)
         {
             Socket tempHandler = (Socket)obj;
             byte[] bytes = new byte[1024];
@@ -100,6 +100,7 @@ namespace GroundTerminalSystem.classes
                     );
 
                     db.Insert(record);
+                    OnPacketRecieved(record);
                 }
 
                 data = "";
