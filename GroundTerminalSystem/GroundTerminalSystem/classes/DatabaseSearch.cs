@@ -30,7 +30,10 @@ namespace GroundTerminalSystem.classes
                 {
                     using (StreamWriter logTele = new StreamWriter("TelemetryLog.txt", true))
                     {
-                        logTele.WriteLine(selectResult.Records.ToString());
+                        foreach (var record in selectResult.Records)
+                        {
+                            logTele.WriteLine(record);
+                        }
                     }
                     return selectResult.Records;
                 }
