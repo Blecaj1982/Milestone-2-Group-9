@@ -111,7 +111,7 @@ namespace AircraftTransmissionSystem
                 try
                 {
                     //Grabs log contents into a string
-                    int counter = 0;
+                    uint counter = 0;
                     foreach (string line in System.IO.File.ReadLines("D:/School/Level5/Advanced Software Quality/AircraftTransmissionSystem/AircraftTransmissionSystem/AircraftTransmissionSystem/" + AircraftName + ".txt"))
                     {
                         Console.WriteLine("We can read lines");
@@ -123,7 +123,7 @@ namespace AircraftTransmissionSystem
 
                         telemetryCheckSum = CalculateCheckSum(float.Parse(flightInformation[5]), float.Parse(flightInformation[6]), float.Parse(flightInformation[7]));
 
-                        telemetryLine += telemetryCheckSum.ToString() + ",";
+                        telemetryLine = AircraftName + "," + counter.ToString() + "," + telemetryLine + telemetryCheckSum.ToString() + ",";
 
                         Console.WriteLine(telemetryLine);
 
