@@ -83,22 +83,24 @@ namespace GroundTerminalSystem.classes
                 // parse the packet and store the corresponding
                 // information into ta packet object              
                 aircraftPacket.parsePackets(data);
-                CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank);
 
-                // insert packet data into data base
-                TelemetryRecordDAL record = new TelemetryRecordDAL(
-                    aircraftPacket.AircraftTailNum,
-                    aircraftPacket.Timestamp,
-                    aircraftPacket.Accel_X,
-                    aircraftPacket.Accel_Y, 
-                    aircraftPacket.Accel_Z,
-                    aircraftPacket.Weight,
-                    aircraftPacket.Altitude,
-                    aircraftPacket.Pitch,
-                    aircraftPacket.Bank
-                );
+                if (aircraftPacket.Checksum == CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank))
+                {
+                    // insert packet data into data base
+                    TelemetryRecordDAL record = new TelemetryRecordDAL(
+                        aircraftPacket.AircraftTailNum,
+                        aircraftPacket.Timestamp,
+                        aircraftPacket.Accel_X,
+                        aircraftPacket.Accel_Y, 
+                        aircraftPacket.Accel_Z,
+                        aircraftPacket.Weight,
+                        aircraftPacket.Altitude,
+                        aircraftPacket.Pitch,
+                        aircraftPacket.Bank
+                    );
 
-                db.Insert(record);
+                    db.Insert(record);
+                }
 
                 data = "";
             }
