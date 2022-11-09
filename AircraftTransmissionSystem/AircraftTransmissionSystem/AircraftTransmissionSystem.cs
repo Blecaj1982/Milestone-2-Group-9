@@ -120,13 +120,18 @@ namespace AircraftTransmissionSystem
                 {
                     /// Grabs log contents into a string
                     uint counter = 0;
-                    foreach (string line in System.IO.File.ReadLines("D:/School/Level5/Advanced Software Quality/AircraftTransmissionSystem/AircraftTransmissionSystem/AircraftTransmissionSystem/" + AircraftName + ".txt"))
+                    foreach (string line in System.IO.File.ReadLines("./../../../" + AircraftName + ".txt"))
                     {
                         string[] flightInformation = null;
                         char[] unwantedChar = { ',' };
 
                         ///Formatting single line telemetry data
-                        telemetryLine = line.Replace(" ", "");
+
+                        // remove spaces from entire string except for timestamp
+                        int dateEnd = line.IndexOf(',');
+                        telemetryLine = line.Substring(0, dateEnd + 1);
+                        telemetryLine += line.Substring(dateEnd + 1).Replace(" ", "");
+
                         flightInformation = telemetryLine.Split(unwantedChar, StringSplitOptions.RemoveEmptyEntries);
                         telemetryCheckSum = CalculateCheckSum(float.Parse(flightInformation[5]), float.Parse(flightInformation[6]), float.Parse(flightInformation[7]));
                         telemetryLine = AircraftName + "," + counter.ToString() + "," + telemetryLine + telemetryCheckSum.ToString() + ",";

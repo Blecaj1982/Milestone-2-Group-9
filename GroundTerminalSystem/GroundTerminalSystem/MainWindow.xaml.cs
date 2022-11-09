@@ -22,7 +22,7 @@ namespace GroundTerminalSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        ListenerClass serverListener = new ListenerClass("127.0.0.1", 13000);
+        ListenerClass serverListener = new ListenerClass("127.0.0.1", 8989);
 
         LiveConnection liveConnectionPage = new LiveConnection();
         DatabaseInfo databaseInfoPage = new DatabaseInfo();

@@ -8,15 +8,17 @@ namespace GroundTerminalSystem.classes
 {
     internal class AircraftPacket
     {
-        public string Timestamp { set; get; }
-        public string Accel_X { set; get; }
-        public string Accel_Y { set; get; }
-        public string Accel_Z { set; get; }
+        public string AircraftTailNum { set; get; }
+        public DateTime Timestamp { set; get; }
+        public float Accel_X { set; get; }
+        public float Accel_Y { set; get; }
+        public float Accel_Z { set; get; }
         public float Weight { set; get; }
         public float Altitude {set;get;} 
         public float Pitch { set; get; }
         public float Bank { set; get; }         
         public float Checksum { set; get; }
+        public int PacketNum { set; get; }
 
         
 
@@ -35,19 +37,35 @@ namespace GroundTerminalSystem.classes
         public void PacketBulder(string[] FlightInfo)
         {
             float tempParse = 0;
-            Timestamp = FlightInfo[0];
-            Accel_X = FlightInfo[1];
-            Accel_Y = FlightInfo[2];
-            Accel_Z = FlightInfo[3];
+
+            AircraftTailNum = FlightInfo[0];
+
+            PacketNum = int.Parse(FlightInfo[1]);
+
+            Timestamp = DateTime.Parse(FlightInfo[2].Replace('_', '-'));
+
+            float.TryParse(FlightInfo[2], out tempParse);
+            Accel_X = tempParse;
+
+            float.TryParse(FlightInfo[3], out tempParse);
+            Accel_Y = tempParse;
+
             float.TryParse(FlightInfo[4], out tempParse);
-            Weight = tempParse;
+            Accel_Z = tempParse;
+
             float.TryParse(FlightInfo[5], out tempParse);
-            Altitude = tempParse;
+            Weight = tempParse;
+
             float.TryParse(FlightInfo[6], out tempParse);
-            Pitch = tempParse;
+            Altitude = tempParse;
+
             float.TryParse(FlightInfo[7], out tempParse);
-            Bank = tempParse;
+            Pitch = tempParse;
+
             float.TryParse(FlightInfo[8], out tempParse);
+            Bank = tempParse;
+
+            float.TryParse(FlightInfo[9], out tempParse);
             Checksum = tempParse;
         }
 

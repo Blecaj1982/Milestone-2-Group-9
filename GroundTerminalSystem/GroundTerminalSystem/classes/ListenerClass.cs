@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Net.Sockets;
 using System.Net.Mail;
 using System.Windows.Markup;
+using FDMS.DAL;
 
 namespace GroundTerminalSystem.classes
 {
@@ -17,7 +18,10 @@ namespace GroundTerminalSystem.classes
     {
         public string sIpAddress {private set; get; }
         public int Port { set; get; }
+
         AircraftPacket aircraftPacket;
+        FdmsDatabase db = new FdmsDatabase();
+        
 
         public ListenerClass(string ipAdress, int tmpPort)
         {
@@ -29,6 +33,9 @@ namespace GroundTerminalSystem.classes
         public void ListenForConnection()
         {
             Console.WriteLine("listening");
+
+            db.Connect(ConfigurationManager.ConnectionStrings["cn"].ConnectionString);
+
             IPAddress ipAddress = IPAddress.Parse(sIpAddress);
             IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Port);
 
@@ -63,21 +70,36 @@ namespace GroundTerminalSystem.classes
             byte[] bytes = new byte[1024];
             string data = null;
             
-
             while (true)
             {
                 int bytesRec = tempHandler.Receive(bytes);
                 data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-                if (data.IndexOf(data) > -1)
+                if (data.IndexOf(data) == -1)
                 {
                     break;
                 }
+
                 // parse the packet and store the corresponding
                 // information into ta packet object              
+                aircraftPacket.parsePackets(data);
+                CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank);
+
+                // insert packet data into data base
+                TelemetryRecordDAL record = new TelemetryRecordDAL(
+                    aircraftPacket.AircraftTailNum,
+                    aircraftPacket.Timestamp,
+                    aircraftPacket.Accel_X,
+                    aircraftPacket.Accel_Y, 
+                    aircraftPacket.Accel_Z,
+                    aircraftPacket.Weight,
+                    aircraftPacket.Altitude,
+                    aircraftPacket.Pitch,
+                    aircraftPacket.Bank
+                );
+
+                db.Insert(record);
             }
-            aircraftPacket.parsePackets(data);
-            CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank);
         }
 
         public int CheckSumClac(float Alt, float Pitch, float Bank)
