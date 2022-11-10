@@ -120,7 +120,7 @@ namespace AircraftTransmissionSystem
                 {
                     /// Grabs log contents into a string
                     uint counter = 0;
-                    foreach (string line in System.IO.File.ReadLines("./../../../" + AircraftName + ".txt"))
+                    foreach (string line in System.IO.File.ReadLines(AircraftName + ".txt"))
                     {
                         string[] flightInformation = null;
                         char[] unwantedChar = { ',' };
