@@ -82,17 +82,15 @@ namespace GroundTerminalSystem.classes
 
                 // parse the packet and store the corresponding
                 // information into ta packet object              
+                aircraftPacket.parsePackets(data);
+                if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
+                {
+                    PacketDatabaseInsertion(OnPacketRecieved);
+                }
+
+                data = "";
             }
-            aircraftPacket.parsePackets(data);
-            if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
-            {
-                PacketDatabaseInsertion(OnPacketRecieved);
-            }
-            data = "";
-            //if (aircraftPacket.Checksum == CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank))
-            //{
-            // probably delete this line
-            //}
+
         }
 
         public int CheckSumClac(float Alt, float Pitch, float Bank)

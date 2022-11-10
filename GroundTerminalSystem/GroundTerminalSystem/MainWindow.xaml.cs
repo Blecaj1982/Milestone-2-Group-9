@@ -33,6 +33,7 @@ namespace GroundTerminalSystem
         public MainWindow()
         {
             InitializeComponent();
+
             //initially live connection screen will be on the main panel
             LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
             mainPanel.Content = liveConnectionPage;
@@ -71,15 +72,6 @@ namespace GroundTerminalSystem
         //private void RealTimeModeOn_Checked(object sender, RoutedEventArgs e)
         //{
         //    RealTimeModeOff.IsChecked = false;
-        //}
-
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    DatabaseSearch dbs = new DatabaseSearch();
-        //    var dt = dbs.dbaseSearch(txtSearch.Text).DefaultView;
-        //    DataShow.ItemsSource = dt;
-        //    DataShow.Items.Refresh();
-
         //}
 
         private void LiveConnectionButtonOnClick(object sender, RoutedEventArgs e)
