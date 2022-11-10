@@ -10,7 +10,8 @@ using GroundTerminalSystem.classes;
 namespace GroundTerminalSystem
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Initializes and provides components to the entire Ground Terminal
+    /// Application
     /// </summary>
     public partial class App : Application
     {
@@ -22,6 +23,11 @@ namespace GroundTerminalSystem
 
         private Socket listenerSocket;
 
+        /// <summary>
+        /// Initializes database and transmission components as the app starts
+        /// up. Notifies of any start up errors.
+        /// </summary>
+        /// <param name="e">Arguments for the event. unused</param>
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -39,15 +45,14 @@ namespace GroundTerminalSystem
                 );
             }
 
-
             ServerListener = new ListenerClass();
 
             // Parse transmission information then start the listener
-            if (!IPAddress.TryParse(ConfigurationManager.AppSettings.Get("TransmissionIP"), out IPAddress ipAddress))
+            if (!IPAddress.TryParse(ConfigurationManager.AppSettings.Get("TransmissionIP"), out IPAddress ipAddress)) // parse ip
             {
                 MessageBox.Show($"Unable to parse Transmission IP Address {ConfigurationManager.AppSettings.Get("TransmissionIP")}");
             }
-            else if (!ushort.TryParse(ConfigurationManager.AppSettings.Get("TransmissionPort"), out ushort port))
+            else if (!ushort.TryParse(ConfigurationManager.AppSettings.Get("TransmissionPort"), out ushort port)) // parse port
             {
                 MessageBox.Show($"Unable to parse Transmission Port {ConfigurationManager.AppSettings.Get("TransmissionIP")}");
             }
@@ -71,6 +76,11 @@ namespace GroundTerminalSystem
             }
         }
 
+        /// <summary>
+        /// Cleans up the database and transmission components of the Ground
+        /// Terminal application
+        /// </summary>
+        /// <param name="e">Arguments for the event. unused</param>
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
