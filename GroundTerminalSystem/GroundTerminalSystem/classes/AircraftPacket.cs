@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FDMS.DAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,17 +22,12 @@ namespace GroundTerminalSystem.classes
         public int PacketNum { set; get; }
 
         
-
         // Returns if the parse was successful or not
-        public bool parsePackets(string packetToBeParsed)
+        public void parsePackets(string packetToBeParsed)
         {
-            bool retCode = false;
-            string[] separatedFlightData = null;
             char[] unwantedChar = { ',' };
-            
-            separatedFlightData = packetToBeParsed.Split(unwantedChar, StringSplitOptions.RemoveEmptyEntries);
+            string[] separatedFlightData = packetToBeParsed.Split(unwantedChar, StringSplitOptions.RemoveEmptyEntries);
             PacketBulder(separatedFlightData);
-            return retCode;
         }
 
         public void PacketBulder(string[] FlightInfo)
@@ -69,5 +65,19 @@ namespace GroundTerminalSystem.classes
             Checksum = tempParse;
         }
 
+        public TelemetryRecordDAL ConvertToTelemetryRecord()
+        {
+            return new TelemetryRecordDAL(
+                AircraftTailNum,
+                Timestamp,
+                Accel_X,
+                Accel_Y,
+                Accel_Z,
+                Weight,
+                Altitude,
+                Pitch,
+                Bank
+            );
+        }
     }     
 }

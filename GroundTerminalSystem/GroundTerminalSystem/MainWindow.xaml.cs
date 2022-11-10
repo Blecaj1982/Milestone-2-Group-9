@@ -30,7 +30,7 @@ namespace GroundTerminalSystem
 
         bool isConnected = false;
         object isConnectedLockObject = new object();
-        List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
+        List<TelemetryRecordDAL> liveData = new List<TelemetryRecordDAL>();
 
         public MainWindow()
         {
@@ -40,19 +40,10 @@ namespace GroundTerminalSystem
             LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
             mainPanel.Content = liveConnectionPage;
 
-            liveConnectionPage.LiveConnectionDataView.ItemsSource = Records;
+            liveConnectionPage.LiveConnectionDataView.ItemsSource = liveData;
 
-            Thread ListenerThread = new Thread(
-                () => 
-                {
-                   App.ServerListener.ListenForConnection(
-                       ShowListenerInitializationError,
-                       AddRecordToLiveData
-                   );
-                }
-            );
-
-            ListenerThread.Start();
+            // hook up to listener to receive live data
+            App.ServerListener.RecordReceivedEvent += (r) => AddRecordToLiveData(r);
         }
 
         private void AddRecordToLiveData(TelemetryRecordDAL record)
@@ -63,19 +54,11 @@ namespace GroundTerminalSystem
                {
                    Dispatcher.Invoke(() =>
                    {
-                       Records.Insert(0, record);
+                       liveData.Insert(0, record);
                        liveConnectionPage.LiveConnectionDataView.Items.Refresh();
                    });
                }
            }
-        }
-
-        private void ShowListenerInitializationError(IPEndPoint endPoint)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                MessageBox.Show($"Unable to begin listening for Aicraft Transmissions on {endPoint.Address},{endPoint.Port}");
-            });
         }
 
         private void OnBorderMouseDown(object sender, MouseButtonEventArgs e)
