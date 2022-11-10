@@ -38,7 +38,12 @@ namespace GroundTerminalSystem
             }
 
             // Create and start transmission system listener on its own thread 
-            ServerListener = new ListenerClass("127.0.0.1", 8989, InsertionDatabase);
+            ServerListener = new ListenerClass(
+                ConfigurationManager.AppSettings.Get("TransmissionIP"), 
+                ushort.Parse(ConfigurationManager.AppSettings.Get("TransmissionPort")), 
+                InsertionDatabase
+            );
+
             ServerListener.RecordReceivedEvent += (record) => InsertionDatabase.Insert(record);
             new Thread(
                 () => {
