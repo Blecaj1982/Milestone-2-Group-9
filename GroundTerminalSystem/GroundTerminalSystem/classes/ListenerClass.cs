@@ -82,29 +82,17 @@ namespace GroundTerminalSystem.classes
 
                 // parse the packet and store the corresponding
                 // information into ta packet object              
-                aircraftPacket.parsePackets(data);
-
-                if (aircraftPacket.Checksum == CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank))
-                {
-                    // insert packet data into data base
-                    TelemetryRecordDAL record = new TelemetryRecordDAL(
-                        aircraftPacket.AircraftTailNum,
-                        aircraftPacket.Timestamp,
-                        aircraftPacket.Accel_X,
-                        aircraftPacket.Accel_Y, 
-                        aircraftPacket.Accel_Z,
-                        aircraftPacket.Weight,
-                        aircraftPacket.Altitude,
-                        aircraftPacket.Pitch,
-                        aircraftPacket.Bank
-                    );
-
-                    db.Insert(record);
-                    OnPacketRecieved(record);
-                }
-
-                data = "";
             }
+            aircraftPacket.parsePackets(data);
+            if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
+            {
+                PacketDatabaseInsertion(OnPacketRecieved);
+            }
+            data = "";
+            //if (aircraftPacket.Checksum == CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank))
+            //{
+            // probably delete this line
+            //}
         }
 
         public int CheckSumClac(float Alt, float Pitch, float Bank)
@@ -112,6 +100,35 @@ namespace GroundTerminalSystem.classes
             int ReturnedCalc = 0 ;
             ReturnedCalc = (int)((Alt + Pitch + Bank) / 3);
             return ReturnedCalc;
+        }
+
+        public bool DeterminePacketEquality(float groundCalculatedCheckSum, float recievedChecksum)
+        {
+            bool isEqual = false;
+            if (groundCalculatedCheckSum == recievedChecksum)
+            {
+                isEqual = true; ;
+            }
+            return isEqual;
+        }
+
+        public void PacketDatabaseInsertion(Action<TelemetryRecordDAL> OnPacketRecieved)
+        {
+            // insert packet data into data base
+            TelemetryRecordDAL record = new TelemetryRecordDAL(
+                aircraftPacket.AircraftTailNum,
+                aircraftPacket.Timestamp,
+                aircraftPacket.Accel_X,
+                aircraftPacket.Accel_Y,
+                aircraftPacket.Accel_Z,
+                aircraftPacket.Weight,
+                aircraftPacket.Altitude,
+                aircraftPacket.Pitch,
+                aircraftPacket.Bank
+            );
+
+            db.Insert(record);
+            OnPacketRecieved(record);
         }
     }
 
