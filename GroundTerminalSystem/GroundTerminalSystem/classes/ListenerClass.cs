@@ -18,57 +18,50 @@ namespace GroundTerminalSystem.classes
     {
         public string sIpAddress {private set; get; }
 
-        public int Port { set; get; }
+        public ushort Port { set; get; }
 
         AircraftPacket aircraftPacket;
         FdmsDatabase db = new FdmsDatabase();
         
 
-        public ListenerClass(string ipAdress, int tmpPort)
+        public ListenerClass(string ipAdress, ushort tmpPort)
         {
             sIpAddress = ipAdress;
             Port = tmpPort;
             aircraftPacket = new AircraftPacket();
         }
 
-        public void ListenForConnection(Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
+        public void ListenForConnection(Action<IPEndPoint> OnConnectionError, Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
         {
             Console.WriteLine("listening");
 
             db.Connect(ConfigurationManager.ConnectionStrings["cn"].ConnectionString);
-
             IPAddress ipAddress = IPAddress.Parse(sIpAddress);
             IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Port);
 
-            Socket listenerSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            Socket handler = null;
-
-            listenerSocket.Blocking = false;
-
-            while (!cancelToken.IsCancellationRequested)
+            try
             {
-                try
+                using (Socket listenerSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
                 {
+                    listenerSocket.Blocking = false;
                     listenerSocket.Bind(iPEndPoint);
                     listenerSocket.Listen(1);
 
-                    while (true)
+                    while (!cancelToken.IsCancellationRequested) //listen for connections until program ends
                     {
                         try
                         {
-                            handler = listenerSocket.Accept();
-
-                            if(handler != null)
+                            Socket handler = listenerSocket.Accept();
+                            if (handler != null)
                             {
-                                Thread packetThread = new Thread(() => RecievePacket(handler, OnPacketRecieved, cancelToken));
-                                packetThread.Start();
-                            }             
+                                new Thread(() => RecievePacket(handler, OnPacketRecieved, cancelToken))
+                                    .Start();
+                            }
                         }
-                        catch(SocketException e)
+                        catch (SocketException e)
                         {
-                            if (e.SocketErrorCode == SocketError.WouldBlock)
+                            if (e.SocketErrorCode == SocketError.WouldBlock) //no incoming connection, sleep
                             {
-                                //no incoming connection, sleep 
                                 Thread.Sleep(3000);
                             }
                             else
@@ -78,15 +71,13 @@ namespace GroundTerminalSystem.classes
                         }
                     }
                 }
-                catch(SocketException e)
-                {
-                    Console.WriteLine("ERROR" + e.Message);
-                }
-
+            }
+            catch(SocketException e) // failed to create, bind, or listen on socket
+            {
+                OnConnectionError(iPEndPoint);
+                Console.WriteLine("ERROR" + e.Message);
             }
 
-            listenerSocket.Disconnect(false);
-            listenerSocket.Dispose();
             Console.WriteLine("done");
         }
 
@@ -95,22 +86,20 @@ namespace GroundTerminalSystem.classes
             Socket tempHandler = (Socket)obj;
             tempHandler.Blocking = true;
             byte[] bytes = new byte[1024];
-            string data = null;
             
-            while (!cancelToken.IsCancellationRequested)
+            while (!cancelToken.IsCancellationRequested) //get data from socket until program ends
             {
                 try
                 {
+                    string data = "";
                     int bytesRec = tempHandler.Receive(bytes);
                     data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-                    if (data.IndexOf(data) == -1)
+                    if (bytesRec == -1 || data.IndexOf(data) == -1)
                     {
                         break;
                     }
 
-                    // parse the packet and store the corresponding
-                    // information into ta packet object              
                     aircraftPacket.parsePackets(data);
                     if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
                     {
@@ -119,12 +108,19 @@ namespace GroundTerminalSystem.classes
 
                     data = "";
                 }
-                catch (SocketException ex)
+                catch (SocketException ex) //error receiving data, connection probably severed, stop receiving
                 {
                     Console.WriteLine("ERROR" + ex.Message);
                     break;
                 }
             }
+
+            if (tempHandler.Connected)
+            {
+                tempHandler.Disconnect(false);
+            }
+
+            tempHandler.Dispose();
         }
 
         public int CheckSumClac(float Alt, float Pitch, float Bank)

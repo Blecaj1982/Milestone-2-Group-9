@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
 using FDMS.DAL;
+using System.Net;
 
 namespace GroundTerminalSystem
 {
@@ -47,24 +48,38 @@ namespace GroundTerminalSystem
             Thread ListenerThread = new Thread(
                 () => 
                 {
-                    serverListener.ListenForConnection((r) =>
-                       {
-                           lock(isConnectedLockObject)
-                           {
-                               if (isConnected)
-                               {
-                                   Dispatcher.Invoke(() =>
-                                   {
-                                       Records.Insert(0, r);
-                                       liveConnectionPage.LiveConnectionDataView.Items.Refresh();
-                                   });
-                               }
-                           }
-                       }, programCancelToken.Token);
+                   serverListener.ListenForConnection(
+                       ShowListenerInitializationError,
+                       AddRecordToLiveData,
+                       programCancelToken.Token
+                   );
                 }
                 );
 
             ListenerThread.Start();
+        }
+
+        private void AddRecordToLiveData(TelemetryRecordDAL record)
+        {
+           lock(isConnectedLockObject)
+           {
+               if (isConnected)
+               {
+                   Dispatcher.Invoke(() =>
+                   {
+                       Records.Insert(0, record);
+                       liveConnectionPage.LiveConnectionDataView.Items.Refresh();
+                   });
+               }
+           }
+        }
+
+        private void ShowListenerInitializationError(IPEndPoint endPoint)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show($"Unable to begin listening for Aicraft Transmissions on {endPoint.Address},{endPoint.Port}");
+            });
         }
 
         private void OnBorderMouseDown(object sender, MouseButtonEventArgs e)
@@ -110,7 +125,8 @@ namespace GroundTerminalSystem
 
         private void QuitButtonOnClick(object sender, RoutedEventArgs e)
         {
-            System.Windows.Application.Current.Shutdown();
+            programCancelToken.Cancel();
+            Application.Current.Shutdown();
         }
     }
 }
