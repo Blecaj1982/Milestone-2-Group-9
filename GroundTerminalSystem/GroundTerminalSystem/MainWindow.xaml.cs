@@ -23,12 +23,25 @@ namespace GroundTerminalSystem
     public partial class MainWindow : Window
     {
         ListenerClass serverListener = new ListenerClass("127.0.0.1", 13000);
-
+        List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
         public MainWindow()
         {
             InitializeComponent();
 
-            Thread ListenerThread = new Thread(serverListener.ListenForConnection);
+            Thread ListenerThread = new Thread(
+                () =>
+                {
+                    serverListener.ListenForConnection((r) =>
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            Records.Insert(0, r);
+                            liveConnectionPage.LiveConnectionDataView.Items.Refresh();
+                        });
+                    });
+                }
+                );
+
             ListenerThread.Start();
 
         }

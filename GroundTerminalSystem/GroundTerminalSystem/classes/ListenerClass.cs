@@ -26,7 +26,7 @@ namespace GroundTerminalSystem.classes
             aircraftPacket = new AircraftPacket();
         }
 
-        public void ListenForConnection()
+        public void ListenForConnection(Action<TelemetryRecordDAL> OnPacketRecieved)
         {
             Console.WriteLine("listening");
             IPAddress ipAddress = IPAddress.Parse(sIpAddress);
@@ -45,7 +45,7 @@ namespace GroundTerminalSystem.classes
                     handler = listenerSocket.Accept();
                     if(handler != null)
                     {
-                        Thread packetThread = new Thread(() => RecievePacket(handler));
+                        Thread packetThread = new Thread(() => RecievePacket(handler,OnPacketRecieved));
                         packetThread.Start();
                     }             
                 }
@@ -57,7 +57,7 @@ namespace GroundTerminalSystem.classes
             Console.WriteLine("done");
         }
 
-        void RecievePacket(object obj)
+        void RecievePacket(object obj, Action<TelemetryRecordDAL> OnPacketRecieved)
         {
             Socket tempHandler = (Socket)obj;
             byte[] bytes = new byte[1024];
@@ -77,7 +77,15 @@ namespace GroundTerminalSystem.classes
                 // information into ta packet object              
             }
             aircraftPacket.parsePackets(data);
-            CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank);
+            if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
+            {
+                PacketDatabaseInsertion(OnPacketRecieved);
+            }
+            data = "";
+            //if (aircraftPacket.Checksum == CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank))
+            //{
+            // probably delete this line
+            //}
         }
 
         public int CheckSumClac(float Alt, float Pitch, float Bank)
@@ -85,6 +93,35 @@ namespace GroundTerminalSystem.classes
             int ReturnedCalc = 0 ;
             ReturnedCalc = (int)((Alt + Pitch + Bank) / 3);
             return ReturnedCalc;
+        }
+
+        public bool DeterminePacketEquality(float groundCalculatedCheckSum, float recievedChecksum)
+        {
+            bool isEqual = false;
+            if (groundCalculatedCheckSum == recievedChecksum)
+            {
+                isEqual = true; ;
+            }
+            return isEqual;
+        }
+
+        public void PacketDatabaseInsertion(Action<TelemetryRecordDAL> OnPacketRecieved)
+        {
+            // insert packet data into data base
+            TelemetryRecordDAL record = new TelemetryRecordDAL(
+                aircraftPacket.AircraftTailNum,
+                aircraftPacket.Timestamp,
+                aircraftPacket.Accel_X,
+                aircraftPacket.Accel_Y,
+                aircraftPacket.Accel_Z,
+                aircraftPacket.Weight,
+                aircraftPacket.Altitude,
+                aircraftPacket.Pitch,
+                aircraftPacket.Bank
+            );
+
+            db.Insert(record);
+            OnPacketRecieved(record);
         }
     }
 
