@@ -36,65 +36,45 @@ namespace GroundTerminalSystem.classes
         }
 
         private event RecordReceivedDelegate _recordReceivedEvent;
-
-        public string sIpAddress {private set; get; }
-        public ushort Port { set; get; }
-
-        private FdmsDatabase insertionDatabase;
         private CancellationTokenSource stopTokenSource = new CancellationTokenSource(); 
         private object recordReceivedEventLock = new object();
-        
 
-        public ListenerClass(string ipAdress, ushort tmpPort, FdmsDatabase insertionDatabase)
+        public void ListenForConnection(Socket listenerSocket)
         {
-            sIpAddress = ipAdress;
-            Port = tmpPort;
-            this.insertionDatabase = insertionDatabase;
-        }
-
-        public void ListenForConnection(Action<IPEndPoint> OnConnectionError)
-        {
-            Console.WriteLine("listening");
             CancellationToken stopToken = stopTokenSource.Token;
-            IPAddress ipAddress = IPAddress.Parse(sIpAddress);
-            IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Port);
 
             try
             {
-                using (Socket listenerSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
-                {
-                    listenerSocket.Blocking = false; //don't block, so we can shutdown if needed
-                    listenerSocket.Bind(iPEndPoint);
-                    listenerSocket.Listen(1);
+                listenerSocket.Blocking = false; //don't block, so we can shutdown if needed
+                listenerSocket.Listen(1);
+                Console.WriteLine("listening");
 
-                    while (!stopToken.IsCancellationRequested) //listen for connections until program ends
+                while (!stopToken.IsCancellationRequested) //listen for connections until program ends
+                {
+                    try
                     {
-                        try
+                        Socket handler = listenerSocket.Accept();
+                        if (handler != null)
                         {
-                            Socket handler = listenerSocket.Accept();
-                            if (handler != null)
-                            {
-                                new Thread(() => RecievePacket(handler, InvokeRecordReceivedEvent, insertionDatabase, stopTokenSource.Token))
-                                    .Start();
-                            }
+                            new Thread(() => RecievePacket(handler, InvokeRecordReceivedEvent, stopTokenSource.Token))
+                                .Start();
                         }
-                        catch (SocketException e)
+                    }
+                    catch (SocketException e)
+                    {
+                        if (e.SocketErrorCode == SocketError.WouldBlock) //no incoming connection, sleep
                         {
-                            if (e.SocketErrorCode == SocketError.WouldBlock) //no incoming connection, sleep
-                            {
-                                Thread.Sleep(3000);
-                            }
-                            else
-                            {
-                                Console.WriteLine("ERROR" + e.Message);
-                            }
+                            Thread.Sleep(3000);
+                        }
+                        else
+                        {
+                            Console.WriteLine("ERROR" + e.Message);
                         }
                     }
                 }
             }
-            catch(SocketException e) // failed to create, bind, or listen on socket
+            catch(SocketException e) // failed to listen on socket
             {
-                OnConnectionError(iPEndPoint);
                 Console.WriteLine("ERROR" + e.Message);
             }
 
@@ -114,7 +94,7 @@ namespace GroundTerminalSystem.classes
             }
         }
 
-        private static void RecievePacket(object obj, Action<TelemetryRecordDAL> onRecordReceived, FdmsDatabase insertionDatabase, CancellationToken stopToken)
+        private static void RecievePacket(object obj, Action<TelemetryRecordDAL> onRecordReceived, CancellationToken stopToken)
         {
             Socket tempHandler = (Socket)obj;
             tempHandler.Blocking = true;

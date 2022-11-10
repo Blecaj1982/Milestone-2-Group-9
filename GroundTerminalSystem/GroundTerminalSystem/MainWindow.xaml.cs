@@ -28,29 +28,51 @@ namespace GroundTerminalSystem
         LiveConnection liveConnectionPage = new LiveConnection();
         DatabaseInfo databaseInfoPage = new DatabaseInfo();
 
-        bool isConnected = false;
-        object isConnectedLockObject = new object();
-        List<TelemetryRecordDAL> liveData = new List<TelemetryRecordDAL>();
+        private List<TelemetryRecordDAL> liveData = new List<TelemetryRecordDAL>();
+        bool isShowingLiveData = false;
+        object isShowingLiveDataLockObject = new object();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            //initially live connection screen will be on the main panel
-            LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
-            mainPanel.Content = liveConnectionPage;
+            // Activate buttons and pages based on active components
+            ConnectionButton.IsEnabled = App.ListeningForTransmission;
+            LiveConnectionButton.IsEnabled = App.ListeningForTransmission;
+            QueryDatabaseButton.IsEnabled = App.ConnectedToDatabase;
+            bool shouldStartOnLiveDataPage = App.ListeningForTransmission || !App.ConnectedToDatabase;
 
-            liveConnectionPage.LiveConnectionDataView.ItemsSource = liveData;
+            ConnectionButton.Style = (Style)Application.Current.Resources[App.ListeningForTransmission ? "SideMenuButton" : "SideMenuButtonDisabled"];
+            QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButtonDisabled"];
+            LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonDisabled"];
+
+            if (shouldStartOnLiveDataPage && App.ListeningForTransmission)
+            {
+                LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
+            }
+            
+            if (!shouldStartOnLiveDataPage)
+            {
+                QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
+            }
+            else if (App.ConnectedToDatabase)
+            {
+                QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButton"];
+            }
+
+
+            mainPanel.Content = shouldStartOnLiveDataPage ? liveConnectionPage : mainPanel.Content = databaseInfoPage;
 
             // hook up to listener to receive live data
+            liveConnectionPage.LiveConnectionDataView.ItemsSource = liveData;
             App.ServerListener.RecordReceivedEvent += (r) => AddRecordToLiveData(r);
         }
 
         private void AddRecordToLiveData(TelemetryRecordDAL record)
         {
-           lock(isConnectedLockObject)
+           lock(isShowingLiveDataLockObject)
            {
-               if (isConnected)
+               if (isShowingLiveData)
                {
                    Dispatcher.Invoke(() =>
                    {
@@ -71,35 +93,44 @@ namespace GroundTerminalSystem
 
         private void LiveConnectionButtonOnClick(object sender, RoutedEventArgs e)
         {
-            LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
-            QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButton"];
-            mainPanel.Content = liveConnectionPage;
+            if (App.ListeningForTransmission)
+            {
+                LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
+                QueryDatabaseButton.Style = (Style)Application.Current.Resources[App.ConnectedToDatabase ? "SideMenuButton" : "SideMenuButtonDisabled"];
+                mainPanel.Content = liveConnectionPage;
+            }
         }
 
         private void QueryDatabaseButtonOnClick(object sender, RoutedEventArgs e)
         {
-            QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
-            LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButton"];
-            mainPanel.Content = databaseInfoPage;
+            if (App.ConnectedToDatabase)
+            {
+                QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
+                LiveConnectionButton.Style = (Style)Application.Current.Resources[App.ListeningForTransmission ? "SideMenuButton" : "SideMenuButtonDisabled"];
+                mainPanel.Content = databaseInfoPage;
+            }
         }
 
         private void ConnectionButtonOnClick(object sender, RoutedEventArgs e)
         {
-            bool isConnectedTemp = false;
-
-            lock(isConnectedLockObject)
+            if (App.ListeningForTransmission)
             {
-                isConnected = !isConnected;
-                isConnectedTemp = isConnected;
+                bool isConnectedTemp = false;
+
+                lock(isShowingLiveDataLockObject)
+                {
+                    isShowingLiveData = !isShowingLiveData;
+                    isConnectedTemp = isShowingLiveData;
+                }
+
+                SignalIcon.Foreground = isConnectedTemp ?
+                    new SolidColorBrush((Color)ColorConverter.ConvertFromString("#99cc60")) :
+                    new SolidColorBrush((Color)ColorConverter.ConvertFromString("#757575"));
+
+                ConnectionText.Text = isConnectedTemp ?
+                    "Connection On" :
+                    "Connection Off";
             }
-
-            SignalIcon.Foreground = isConnectedTemp ?
-                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#99cc60")) :
-                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#757575"));
-
-            ConnectionText.Text = isConnectedTemp ?
-                "Connection On" :
-                "Connection Off";
         }
 
         private void QuitButtonOnClick(object sender, RoutedEventArgs e)

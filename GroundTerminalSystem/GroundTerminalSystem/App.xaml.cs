@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +21,10 @@ namespace GroundTerminalSystem
         public static FdmsDatabase InsertionDatabase { get; private set; } = new FdmsDatabase();
         public static FdmsDatabase SelectionDatabase { get; private set; } = new FdmsDatabase();
         public static ListenerClass ServerListener { get; private set; }
+        public static bool ConnectedToDatabase { get; private set; } = false;
+        public static bool ListeningForTransmission { get; private set; } = false;
+
+        private Socket listenerSocket;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -27,31 +33,45 @@ namespace GroundTerminalSystem
             // Connect to database
             var insertionDbConnectResult = InsertionDatabase.Connect(ConfigurationManager.ConnectionStrings["cn"].ConnectionString);
             var selectionDbConnectResult = SelectionDatabase.Connect(ConfigurationManager.ConnectionStrings["cn"].ConnectionString);
-            bool connectedToDatabase = insertionDbConnectResult.Success && selectionDbConnectResult.Success;
+            ConnectedToDatabase = insertionDbConnectResult.Success && selectionDbConnectResult.Success;
 
-            if (!connectedToDatabase)
+            if (!ConnectedToDatabase)
             {
-                MessageBox.Show($"Unable to establish connection with Database.\r\n" +
-                    (!insertionDbConnectResult.Success ? $"{insertionDbConnectResult.FailureMessage}\r\n" : "") +
+                MessageBox.Show($"Unable to establish connection with Database.\r\n\r\n" +
+                    (!insertionDbConnectResult.Success ? $"{insertionDbConnectResult.FailureMessage}\r\n\r\n" : "") +
                     (!selectionDbConnectResult.Success ? $"{selectionDbConnectResult.FailureMessage}\r\n" : "") 
                 );
             }
 
-            // Create and start transmission system listener on its own thread 
-            ServerListener = new ListenerClass(
-                ConfigurationManager.AppSettings.Get("TransmissionIP"), 
-                ushort.Parse(ConfigurationManager.AppSettings.Get("TransmissionPort")), 
-                InsertionDatabase
-            );
 
-            ServerListener.RecordReceivedEvent += (record) => InsertionDatabase.Insert(record);
-            new Thread(
-                () => {
-                   ServerListener.ListenForConnection(
-                        (endPoint) => { MessageBox.Show($"Unable to begin listening for Aicraft Transmissions on {endPoint.Address},{endPoint.Port}."); }
-                   );
+            ServerListener = new ListenerClass();
+
+            // Parse transmission information then start the listener
+            if (!IPAddress.TryParse(ConfigurationManager.AppSettings.Get("TransmissionIP"), out IPAddress ipAddress))
+            {
+                MessageBox.Show($"Unable to parse Transmission IP Address {ConfigurationManager.AppSettings.Get("TransmissionIP")}");
+            }
+            else if (!ushort.TryParse(ConfigurationManager.AppSettings.Get("TransmissionPort"), out ushort port))
+            {
+                MessageBox.Show($"Unable to parse Transmission Port {ConfigurationManager.AppSettings.Get("TransmissionIP")}");
+            }
+            else
+            {
+                try
+                {
+                    listenerSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    listenerSocket.Bind(new IPEndPoint(ipAddress, port));
+                    ServerListener.RecordReceivedEvent += (record) => InsertionDatabase.Insert(record);
+                    new Thread(() => { ServerListener.ListenForConnection(listenerSocket); })
+                        .Start();
+                    ListeningForTransmission = true;
                 }
-            ).Start();
+                catch
+                {
+                    MessageBox.Show($"Unable to begin listening for Aicraft Transmissions on {ipAddress},{port}.");
+                    listenerSocket = null;
+                }
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -61,6 +81,15 @@ namespace GroundTerminalSystem
             ServerListener.Stop();
             InsertionDatabase.Disconnect();
             SelectionDatabase.Disconnect();
+
+            if (listenerSocket != null)
+            {
+                if (listenerSocket.Connected)
+                {
+                    listenerSocket.Disconnect(false);
+                }
+                listenerSocket.Dispose();
+            }
         }
     }
 }
