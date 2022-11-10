@@ -45,17 +45,17 @@ namespace GroundTerminalSystem
                 {
                     serverListener.ListenForConnection((r) =>
                        {
-                           Dispatcher.Invoke(() =>
+                           lock(isConnectedLockObject)
                            {
-                               lock(isConnectedLockObject)
+                               if (isConnected)
                                {
-                                   if (isConnected)
+                                   Dispatcher.Invoke(() =>
                                    {
                                        Records.Insert(0, r);
                                        liveConnectionPage.LiveConnectionDataView.Items.Refresh();
-                                   }
+                                   });
                                }
-                           });
+                           }
                        });
                 }
                 );
