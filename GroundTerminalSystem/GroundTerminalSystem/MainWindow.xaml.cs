@@ -30,6 +30,7 @@ namespace GroundTerminalSystem
         bool isConnected = false;
         object isConnectedLockObject = new object();
         List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
+        CancellationTokenSource programCancelToken = new CancellationTokenSource();
 
         public MainWindow()
         {
@@ -40,6 +41,9 @@ namespace GroundTerminalSystem
             mainPanel.Content = liveConnectionPage;
 
             liveConnectionPage.LiveConnectionDataView.ItemsSource = Records;
+
+            
+
             Thread ListenerThread = new Thread(
                 () => 
                 {
@@ -56,7 +60,7 @@ namespace GroundTerminalSystem
                                    });
                                }
                            }
-                       });
+                       }, programCancelToken.Token);
                 }
                 );
 

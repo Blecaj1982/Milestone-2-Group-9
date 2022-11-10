@@ -17,6 +17,7 @@ namespace GroundTerminalSystem.classes
     internal class ListenerClass
     {
         public string sIpAddress {private set; get; }
+
         public int Port { set; get; }
 
         AircraftPacket aircraftPacket;
@@ -26,11 +27,11 @@ namespace GroundTerminalSystem.classes
         public ListenerClass(string ipAdress, int tmpPort)
         {
             sIpAddress = ipAdress;
-            this.Port = tmpPort;
+            Port = tmpPort;
             aircraftPacket = new AircraftPacket();
         }
 
-        public void ListenForConnection(Action<TelemetryRecordDAL> OnPacketRecieved)
+        public void ListenForConnection(Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
         {
             Console.WriteLine("listening");
 
@@ -42,55 +43,88 @@ namespace GroundTerminalSystem.classes
             Socket listenerSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             Socket handler = null;
 
-            try
-            {
-                listenerSocket.Bind(iPEndPoint);
-                listenerSocket.Listen(1);
+            listenerSocket.Blocking = false;
 
-                while (true)
-                {
-                    handler = listenerSocket.Accept();
-                    if(handler != null)
-                    {
-                        Thread packetThread = new Thread(() => RecievePacket(handler, OnPacketRecieved));
-                        packetThread.Start();
-                    }             
-                }
-            }
-            catch(SocketException e)
+            while (!cancelToken.IsCancellationRequested)
             {
-                Console.WriteLine("ERROR" + e.Message);
+                try
+                {
+                    listenerSocket.Bind(iPEndPoint);
+                    listenerSocket.Listen(1);
+
+                    while (true)
+                    {
+                        try
+                        {
+                            handler = listenerSocket.Accept();
+
+                            if(handler != null)
+                            {
+                                Thread packetThread = new Thread(() => RecievePacket(handler, OnPacketRecieved, cancelToken));
+                                packetThread.Start();
+                            }             
+                        }
+                        catch(SocketException e)
+                        {
+                            if (e.SocketErrorCode == SocketError.WouldBlock)
+                            {
+                                //no incoming connection, sleep 
+                                Thread.Sleep(3000);
+                            }
+                            else
+                            {
+                                Console.WriteLine("ERROR" + e.Message);
+                            }
+                        }
+                    }
+                }
+                catch(SocketException e)
+                {
+                    Console.WriteLine("ERROR" + e.Message);
+                }
+
             }
+
+            listenerSocket.Disconnect(false);
+            listenerSocket.Dispose();
             Console.WriteLine("done");
         }
 
-        void RecievePacket(object obj, Action<TelemetryRecordDAL> OnPacketRecieved)
+        void RecievePacket(object obj, Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
         {
             Socket tempHandler = (Socket)obj;
+            tempHandler.Blocking = true;
             byte[] bytes = new byte[1024];
             string data = null;
             
-            while (true)
+            while (!cancelToken.IsCancellationRequested)
             {
-                int bytesRec = tempHandler.Receive(bytes);
-                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                if (data.IndexOf(data) == -1)
+                try
                 {
+                    int bytesRec = tempHandler.Receive(bytes);
+                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+
+                    if (data.IndexOf(data) == -1)
+                    {
+                        break;
+                    }
+
+                    // parse the packet and store the corresponding
+                    // information into ta packet object              
+                    aircraftPacket.parsePackets(data);
+                    if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
+                    {
+                        PacketDatabaseInsertion(OnPacketRecieved);
+                    }
+
+                    data = "";
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine("ERROR" + ex.Message);
                     break;
                 }
-
-                // parse the packet and store the corresponding
-                // information into ta packet object              
-                aircraftPacket.parsePackets(data);
-                if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
-                {
-                    PacketDatabaseInsertion(OnPacketRecieved);
-                }
-
-                data = "";
             }
-
         }
 
         public int CheckSumClac(float Alt, float Pitch, float Bank)
