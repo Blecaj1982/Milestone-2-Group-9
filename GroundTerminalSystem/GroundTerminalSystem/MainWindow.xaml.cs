@@ -37,35 +37,36 @@ namespace GroundTerminalSystem
             InitializeComponent();
 
             // Activate buttons and pages based on active components
-            ConnectionButton.IsEnabled = App.ListeningForTransmission;
-            LiveConnectionButton.IsEnabled = App.ListeningForTransmission;
-            QueryDatabaseButton.IsEnabled = App.ConnectedToDatabase;
-            bool shouldStartOnLiveDataPage = App.ListeningForTransmission || !App.ConnectedToDatabase;
+            InitializeButton(ConnectionButton, App.ListeningForTransmission);
+            InitializeButton(LiveConnectionButton, App.ListeningForTransmission);
+            InitializeButton(QueryDatabaseButton, App.ConnectedToDatabase);
 
-            ConnectionButton.Style = (Style)Application.Current.Resources[App.ListeningForTransmission ? "SideMenuButton" : "SideMenuButtonDisabled"];
-            QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButtonDisabled"];
-            LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonDisabled"];
+            InitializeStartPage();
+
+            // hook up to listener to receive live data
+            liveConnectionPage.LiveConnectionDataView.ItemsSource = liveData;
+            App.ServerListener.RecordReceivedEvent += (r) => AddRecordToLiveData(r);
+        }
+
+        private void InitializeStartPage()
+        {
+            bool shouldStartOnLiveDataPage = App.ListeningForTransmission || !App.ConnectedToDatabase;
+            mainPanel.Content = shouldStartOnLiveDataPage ? liveConnectionPage : mainPanel.Content = databaseInfoPage;
 
             if (shouldStartOnLiveDataPage && App.ListeningForTransmission)
             {
                 LiveConnectionButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
             }
-            
-            if (!shouldStartOnLiveDataPage)
+            else if (App.ConnectedToDatabase)
             {
                 QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButtonActive"];
             }
-            else if (App.ConnectedToDatabase)
-            {
-                QueryDatabaseButton.Style = (Style)Application.Current.Resources["SideMenuButton"];
-            }
+        }
 
-
-            mainPanel.Content = shouldStartOnLiveDataPage ? liveConnectionPage : mainPanel.Content = databaseInfoPage;
-
-            // hook up to listener to receive live data
-            liveConnectionPage.LiveConnectionDataView.ItemsSource = liveData;
-            App.ServerListener.RecordReceivedEvent += (r) => AddRecordToLiveData(r);
+        private static void InitializeButton(Button button, bool enabled)
+        {
+            button.IsEnabled = enabled;
+            button.Style = (Style)Application.Current.Resources[enabled ? "SideMenuButton" : "SideMenuButtonDisabled"];
         }
 
         private void AddRecordToLiveData(TelemetryRecordDAL record)
