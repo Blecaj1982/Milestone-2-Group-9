@@ -1,29 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using GroundTerminalSystem;
-using FDMS.DAL;
 using System.IO;
+
+using FDMS.DAL;
 
 namespace GroundTerminalSystem.classes
 {
-    internal class DatabaseSearch
+    internal static class DatabaseSearch
     {
-        FdmsDatabase database; 
-
-        public DatabaseSearch(FdmsDatabase database)
-        {
-            this.database = database;
-        }
-
-        public List<TelemetryRecordDAL> dbaseSearch(string searchItem)
+        public static List<TelemetryRecordDAL> dbaseSearch(FdmsDatabase database, string searchItem)
         {
             var selectResult = database.Select(searchItem);
 

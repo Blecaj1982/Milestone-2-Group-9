@@ -1,15 +1,11 @@
-﻿using FDMS.DAL;
-using GroundTerminalSystem.classes;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
+﻿using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
+
+using FDMS.DAL;
+using GroundTerminalSystem.classes;
 
 namespace GroundTerminalSystem
 {
@@ -59,6 +55,7 @@ namespace GroundTerminalSystem
             {
                 try
                 {
+                    // create listener socket then start listener thread
                     listenerSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     listenerSocket.Bind(new IPEndPoint(ipAddress, port));
                     ServerListener.RecordReceivedEvent += (record) => InsertionDatabase.Insert(record);

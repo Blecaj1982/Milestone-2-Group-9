@@ -1,25 +1,22 @@
-﻿using FDMS.DAL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+
+using FDMS.DAL;
 
 namespace GroundTerminalSystem.classes
 {
     internal class AircraftPacket
     {
-        public string AircraftTailNum { set; get; }
-        public DateTime Timestamp { set; get; }
-        public float Accel_X { set; get; }
-        public float Accel_Y { set; get; }
-        public float Accel_Z { set; get; }
-        public float Weight { set; get; }
-        public float Altitude {set;get;} 
-        public float Pitch { set; get; }
-        public float Bank { set; get; }         
-        public float Checksum { set; get; }
-        public int PacketNum { set; get; }
+        public string AircraftTailNum { private set; get; }
+        public DateTime Timestamp { private set; get; }
+        public float Accel_X { private set; get; }
+        public float Accel_Y { private set; get; }
+        public float Accel_Z { private set; get; }
+        public float Weight { private set; get; }
+        public float Altitude { private set; get;} 
+        public float Pitch { private set; get; }
+        public float Bank { private set; get; }         
+        public float Checksum { private set; get; }
+        public int PacketNum { private set; get; }
 
         
         // Returns if the parse was successful or not
@@ -30,7 +27,22 @@ namespace GroundTerminalSystem.classes
             PacketBulder(separatedFlightData);
         }
 
-        public void PacketBulder(string[] FlightInfo)
+        public TelemetryRecordDAL ConvertToTelemetryRecord()
+        {
+            return new TelemetryRecordDAL(
+                AircraftTailNum,
+                Timestamp,
+                Accel_X,
+                Accel_Y,
+                Accel_Z,
+                Weight,
+                Altitude,
+                Pitch,
+                Bank
+            );
+        }
+
+        private void PacketBulder(string[] FlightInfo)
         {
             float tempParse = 0;
 
@@ -65,19 +77,5 @@ namespace GroundTerminalSystem.classes
             Checksum = tempParse;
         }
 
-        public TelemetryRecordDAL ConvertToTelemetryRecord()
-        {
-            return new TelemetryRecordDAL(
-                AircraftTailNum,
-                Timestamp,
-                Accel_X,
-                Accel_Y,
-                Accel_Z,
-                Weight,
-                Altitude,
-                Pitch,
-                Bank
-            );
-        }
     }     
 }
