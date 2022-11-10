@@ -31,7 +31,6 @@ namespace GroundTerminalSystem
         bool isConnected = false;
         object isConnectedLockObject = new object();
         List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
-        CancellationTokenSource programCancelToken = new CancellationTokenSource();
 
         public MainWindow()
         {
@@ -48,8 +47,7 @@ namespace GroundTerminalSystem
                 {
                    App.ServerListener.ListenForConnection(
                        ShowListenerInitializationError,
-                       AddRecordToLiveData,
-                       programCancelToken.Token
+                       AddRecordToLiveData
                    );
                 }
             );
@@ -123,7 +121,6 @@ namespace GroundTerminalSystem
 
         private void QuitButtonOnClick(object sender, RoutedEventArgs e)
         {
-            programCancelToken.Cancel();
             Application.Current.Shutdown();
         }
     }

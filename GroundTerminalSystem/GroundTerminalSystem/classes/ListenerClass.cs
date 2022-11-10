@@ -17,24 +17,23 @@ namespace GroundTerminalSystem.classes
     public class ListenerClass
     {
         public string sIpAddress {private set; get; }
-
         public ushort Port { set; get; }
 
-        AircraftPacket aircraftPacket;
-        FdmsDatabase database; 
+        private FdmsDatabase insertionDatabase;
+        private CancellationTokenSource stopTokenSource = new CancellationTokenSource(); 
         
 
-        public ListenerClass(string ipAdress, ushort tmpPort, FdmsDatabase database)
+        public ListenerClass(string ipAdress, ushort tmpPort, FdmsDatabase insertionDatabase)
         {
             sIpAddress = ipAdress;
             Port = tmpPort;
-            aircraftPacket = new AircraftPacket();
-            this.database = database;
+            this.insertionDatabase = insertionDatabase;
         }
 
-        public void ListenForConnection(Action<IPEndPoint> OnConnectionError, Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
+        public void ListenForConnection(Action<IPEndPoint> OnConnectionError, Action<TelemetryRecordDAL> OnPacketRecieved)
         {
             Console.WriteLine("listening");
+            CancellationToken stopToken = stopTokenSource.Token;
             IPAddress ipAddress = IPAddress.Parse(sIpAddress);
             IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Port);
 
@@ -46,14 +45,14 @@ namespace GroundTerminalSystem.classes
                     listenerSocket.Bind(iPEndPoint);
                     listenerSocket.Listen(1);
 
-                    while (!cancelToken.IsCancellationRequested) //listen for connections until program ends
+                    while (!stopToken.IsCancellationRequested) //listen for connections until program ends
                     {
                         try
                         {
                             Socket handler = listenerSocket.Accept();
                             if (handler != null)
                             {
-                                new Thread(() => RecievePacket(handler, OnPacketRecieved, cancelToken))
+                                new Thread(() => RecievePacket(handler, OnPacketRecieved, insertionDatabase, stopTokenSource.Token))
                                     .Start();
                             }
                         }
@@ -80,13 +79,20 @@ namespace GroundTerminalSystem.classes
             Console.WriteLine("done");
         }
 
-        void RecievePacket(object obj, Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
+        public void Stop()
+        {
+            stopTokenSource.Cancel(); 
+        }
+
+
+        static void RecievePacket(object obj, Action<TelemetryRecordDAL> OnPacketRecieved, FdmsDatabase insertionDatabase, CancellationToken stopToken)
         {
             Socket tempHandler = (Socket)obj;
+            AircraftPacket aircraftPacket = new AircraftPacket();
             tempHandler.Blocking = true;
             byte[] bytes = new byte[1024];
             
-            while (!cancelToken.IsCancellationRequested) //get data from socket until program ends
+            while (!stopToken.IsCancellationRequested) //get data from socket until program ends
             {
                 try
                 {
@@ -102,7 +108,7 @@ namespace GroundTerminalSystem.classes
                     aircraftPacket.parsePackets(data);
                     if (DeterminePacketEquality(CheckSumClac(aircraftPacket.Altitude, aircraftPacket.Pitch, aircraftPacket.Bank), aircraftPacket.Checksum))
                     {
-                        PacketDatabaseInsertion(OnPacketRecieved);
+                        PacketDatabaseInsertion(OnPacketRecieved, aircraftPacket, insertionDatabase);
                     }
 
                     data = "";
@@ -122,38 +128,37 @@ namespace GroundTerminalSystem.classes
             tempHandler.Dispose();
         }
 
-        public int CheckSumClac(float Alt, float Pitch, float Bank)
+        static private int CheckSumClac(float Alt, float Pitch, float Bank)
         {
             int ReturnedCalc = 0 ;
             ReturnedCalc = (int)((Alt + Pitch + Bank) / 3);
             return ReturnedCalc;
         }
 
-        public bool DeterminePacketEquality(float groundCalculatedCheckSum, float recievedChecksum)
+        static private bool DeterminePacketEquality(float groundCalculatedCheckSum, float recievedChecksum)
         {
             bool isEqual = false;
             if (groundCalculatedCheckSum == recievedChecksum)
             {
-                isEqual = true; ;
+                isEqual = true;
             }
             return isEqual;
         }
 
-        public void PacketDatabaseInsertion(Action<TelemetryRecordDAL> OnPacketRecieved)
+        static private void PacketDatabaseInsertion(Action<TelemetryRecordDAL> OnPacketRecieved, AircraftPacket packet, FdmsDatabase database)
         {
             // insert packet data into data base
             TelemetryRecordDAL record = new TelemetryRecordDAL(
-                aircraftPacket.AircraftTailNum,
-                aircraftPacket.Timestamp,
-                aircraftPacket.Accel_X,
-                aircraftPacket.Accel_Y,
-                aircraftPacket.Accel_Z,
-                aircraftPacket.Weight,
-                aircraftPacket.Altitude,
-                aircraftPacket.Pitch,
-                aircraftPacket.Bank
+                packet.AircraftTailNum,
+                packet.Timestamp,
+                packet.Accel_X,
+                packet.Accel_Y,
+                packet.Accel_Z,
+                packet.Weight,
+                packet.Altitude,
+                packet.Pitch,
+                packet.Bank
             );
-
             database.Insert(record);
             OnPacketRecieved(record);
         }
