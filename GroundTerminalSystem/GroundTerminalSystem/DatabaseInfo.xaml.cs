@@ -28,7 +28,7 @@ namespace GroundTerminalSystem
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            DatabaseSearch dbs = new DatabaseSearch();
+            DatabaseSearch dbs = new DatabaseSearch(App.SelectionDatabase);
 
             var records = dbs.dbaseSearch(SearchTextBox.Text);
             DatabaseView.ItemsSource = records;

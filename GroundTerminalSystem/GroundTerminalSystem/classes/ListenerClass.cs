@@ -14,28 +14,27 @@ using FDMS.DAL;
 
 namespace GroundTerminalSystem.classes
 {
-    internal class ListenerClass
+    public class ListenerClass
     {
         public string sIpAddress {private set; get; }
 
         public ushort Port { set; get; }
 
         AircraftPacket aircraftPacket;
-        FdmsDatabase db = new FdmsDatabase();
+        FdmsDatabase database; 
         
 
-        public ListenerClass(string ipAdress, ushort tmpPort)
+        public ListenerClass(string ipAdress, ushort tmpPort, FdmsDatabase database)
         {
             sIpAddress = ipAdress;
             Port = tmpPort;
             aircraftPacket = new AircraftPacket();
+            this.database = database;
         }
 
         public void ListenForConnection(Action<IPEndPoint> OnConnectionError, Action<TelemetryRecordDAL> OnPacketRecieved, CancellationToken cancelToken)
         {
             Console.WriteLine("listening");
-
-            db.Connect(ConfigurationManager.ConnectionStrings["cn"].ConnectionString);
             IPAddress ipAddress = IPAddress.Parse(sIpAddress);
             IPEndPoint iPEndPoint = new IPEndPoint(ipAddress, Port);
 
@@ -155,7 +154,7 @@ namespace GroundTerminalSystem.classes
                 aircraftPacket.Bank
             );
 
-            db.Insert(record);
+            database.Insert(record);
             OnPacketRecieved(record);
         }
     }

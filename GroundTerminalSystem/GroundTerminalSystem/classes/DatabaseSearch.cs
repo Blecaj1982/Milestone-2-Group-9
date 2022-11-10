@@ -16,35 +16,31 @@ namespace GroundTerminalSystem.classes
 {
     internal class DatabaseSearch
     {
+        FdmsDatabase database; 
+
+        public DatabaseSearch(FdmsDatabase database)
+        {
+            this.database = database;
+        }
+
         public List<TelemetryRecordDAL> dbaseSearch(string searchItem)
         {
-            FdmsDatabase db = new FdmsDatabase();
+            var selectResult = database.Select(searchItem);
 
-            var connectResult = db.Connect(ConfigurationManager.ConnectionStrings["cn"].ConnectionString);
-
-            if (connectResult.Success)
+            if (selectResult.Success)
             {
-                var selectResult = db.Select(searchItem);
-
-                if (selectResult.Success)
+                using (StreamWriter logTele = new StreamWriter("TelemetryLog.txt", true))
                 {
-                    using (StreamWriter logTele = new StreamWriter("TelemetryLog.txt", true))
+                    foreach (var record in selectResult.Records)
                     {
-                        foreach (var record in selectResult.Records)
-                        {
-                            logTele.WriteLine(record);
-                        }
+                        logTele.WriteLine(record);
                     }
-                    return selectResult.Records;
                 }
-                else
-                {
-                    MessageBox.Show(selectResult.FailureMessage);
-                }
+                return selectResult.Records;
             }
             else
             {
-                MessageBox.Show(connectResult.FailureMessage);
+                MessageBox.Show(selectResult.FailureMessage);
             }
 
             return null;

@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using FDMS.DAL;
 using System.Net;
+using System.Configuration;
 
 namespace GroundTerminalSystem
 {
@@ -24,10 +25,9 @@ namespace GroundTerminalSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        ListenerClass serverListener = new ListenerClass("127.0.0.1", 8989);
-
         LiveConnection liveConnectionPage = new LiveConnection();
         DatabaseInfo databaseInfoPage = new DatabaseInfo();
+
         bool isConnected = false;
         object isConnectedLockObject = new object();
         List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
@@ -43,18 +43,16 @@ namespace GroundTerminalSystem
 
             liveConnectionPage.LiveConnectionDataView.ItemsSource = Records;
 
-            
-
             Thread ListenerThread = new Thread(
                 () => 
                 {
-                   serverListener.ListenForConnection(
+                   App.ServerListener.ListenForConnection(
                        ShowListenerInitializationError,
                        AddRecordToLiveData,
                        programCancelToken.Token
                    );
                 }
-                );
+            );
 
             ListenerThread.Start();
         }
@@ -86,7 +84,7 @@ namespace GroundTerminalSystem
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                this.DragMove();
+                DragMove();
             }
         }
 
