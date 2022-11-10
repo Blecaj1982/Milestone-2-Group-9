@@ -28,6 +28,7 @@ namespace GroundTerminalSystem
         LiveConnection liveConnectionPage = new LiveConnection();
         DatabaseInfo databaseInfoPage = new DatabaseInfo();
         bool isConnected = false;
+        object isConnectedLockObject = new object();
         List<TelemetryRecordDAL> Records = new List<TelemetryRecordDAL>();
 
         public MainWindow()
@@ -46,8 +47,14 @@ namespace GroundTerminalSystem
                        {
                            Dispatcher.Invoke(() =>
                            {
-                               Records.Insert(0, r);
-                               liveConnectionPage.LiveConnectionDataView.Items.Refresh();
+                               lock(isConnectedLockObject)
+                               {
+                                   if (isConnected)
+                                   {
+                                       Records.Insert(0, r);
+                                       liveConnectionPage.LiveConnectionDataView.Items.Refresh();
+                                   }
+                               }
                            });
                        });
                 }
@@ -63,16 +70,6 @@ namespace GroundTerminalSystem
                 this.DragMove();
             }
         }
-
-        //private void RealTimeModeOff_Checked(object sender, RoutedEventArgs e)
-        //{         
-        //    RealTimeModeOn.IsChecked = false;
-        //}
-
-        //private void RealTimeModeOn_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    RealTimeModeOff.IsChecked = false;
-        //}
 
         private void LiveConnectionButtonOnClick(object sender, RoutedEventArgs e)
         {
@@ -90,22 +87,21 @@ namespace GroundTerminalSystem
 
         private void ConnectionButtonOnClick(object sender, RoutedEventArgs e)
         {
-            //add if statement of connection if it is connected or not
-            if (!isConnected)
-            {
+            bool isConnectedTemp = false;
 
-                isConnected = true;
-                //change the icon color to green 
-                SignalIcon.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#99cc60"));
-                ConnectionText.Text = "Connection On";
-            }
-            else
+            lock(isConnectedLockObject)
             {
-                isConnected = false;
-                //change the icon color to red 
-                SignalIcon.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#757575"));
-                ConnectionText.Text = "Connection Off";
+                isConnected = !isConnected;
+                isConnectedTemp = isConnected;
             }
+
+            SignalIcon.Foreground = isConnectedTemp ?
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#99cc60")) :
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#757575"));
+
+            ConnectionText.Text = isConnectedTemp ?
+                "Connection On" :
+                "Connection Off";
         }
 
         private void QuitButtonOnClick(object sender, RoutedEventArgs e)
