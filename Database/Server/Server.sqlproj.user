@@ -4,5 +4,12 @@
     <TargetDatabase>FDMS_Database</TargetDatabase>
     <StartupScript>(Blank)</StartupScript>
     <StartAction>StartNone</StartAction>
+    <CreateNewDatabase>True</CreateNewDatabase>
+    <BlockOnPossibleDataLoss>True</BlockOnPossibleDataLoss>
+    <IncludeTransactionalScripts>True</IncludeTransactionalScripts>
+    <DeployDatabaseInSingleUserMode>True</DeployDatabaseInSingleUserMode>
+    <DropRoleMembersNotInSource>False</DropRoleMembersNotInSource>
+    <DropPermissionsNotInSource>False</DropPermissionsNotInSource>
+    <DropObjectsNotInSource>True</DropObjectsNotInSource>
   </PropertyGroup>
 </Project>

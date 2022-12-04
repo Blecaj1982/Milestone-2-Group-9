@@ -5,6 +5,7 @@ using FDMS.DAL;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Diagnostics;
 
 namespace Tests
 {
@@ -42,21 +43,21 @@ namespace Tests
             string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             string[][] parsedLines = lines.ToList().Select(l => l.Split(',')).ToArray();
 
-            foreach(string[] l in parsedLines)
+            foreach (string[] l in parsedLines)
             {
                 TestData.Add(
                     new TelemetryRecordDAL(
                     )
                     {
-                        AircraftTailNum=l[0],
-                        Timestamp=DateTime.Parse(l[1]),
-                        Accel_X=float.Parse(l[2]),
-                        Accel_Y=float.Parse(l[3]),
-                        Accel_Z=float.Parse(l[4]),
-                        Weight=float.Parse(l[5]),
-                        Altitude=float.Parse(l[6]),
-                        Pitch=float.Parse(l[7]),
-                        Bank=float.Parse(l[8])
+                        AircraftTailNum = l[0],
+                        Timestamp = DateTime.Parse(l[1]),
+                        Accel_X = float.Parse(l[2]),
+                        Accel_Y = float.Parse(l[3]),
+                        Accel_Z = float.Parse(l[4]),
+                        Weight = float.Parse(l[5]),
+                        Altitude = float.Parse(l[6]),
+                        Pitch = float.Parse(l[7]),
+                        Bank = float.Parse(l[8])
                     }
                 );
             }
@@ -71,6 +72,69 @@ namespace Tests
             db.Disconnect();
         }
 
+        [TestMethod]
+        [DoNotParallelize]
+        public void DBFN030B2_Insert_1_Record_In_1_Second()
+        {
+            // setup
+            FdmsDatabase d = new FdmsDatabase();
+            var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
+            Assert.IsTrue(connectResult.Success);
+            TelemetryRecordDAL record = new TelemetryRecordDAL(
+                "G-TTXT",
+                DateTime.Parse("1-20-1992 6:06:50"),
+                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+            );
+
+            // test
+            Stopwatch timer = Stopwatch.StartNew();
+            var insertResult = d.Insert(record);
+            timer.Stop();
+
+            var selectResult = d.Select(record.AircraftTailNum);
+            d.Disconnect();
+
+            // Confirm results
+            Assert.IsTrue(insertResult.Success);
+            Assert.IsTrue(timer.Elapsed.TotalSeconds <  1);
+            Assert.IsTrue(selectResult.Success);
+            Assert.IsTrue(selectResult.Records.Count == 1);
+            Assert.IsTrue(EquateRecords(record, selectResult.Records[0]));
+        }
+
+        [TestMethod]
+        [DoNotParallelize]
+        public void DBFN0501_Search_100_000_Records_In_1_Second()
+        {
+            // create db instance
+            FdmsDatabase d = new FdmsDatabase();
+
+            // connect
+            var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
+            Assert.IsTrue(connectResult.Success);
+
+            // insert 100000 etnries
+            int entries = 0;
+            while(entries< 100000) {
+            for (int i = 0; i < TestData.Count; i++) {
+                    d.Insert(TestData[i]);
+                    entries++;
+                }
+            }
+
+            // start timer
+            Stopwatch timer = Stopwatch.StartNew();
+            // search for 100000 entries
+            var searchResult = d.Select(TestData.First().AircraftTailNum, 100000);
+            timer.Stop();
+
+            d.Disconnect();
+
+            // Confirm results
+            Assert.IsTrue(searchResult.Success);
+            Assert.IsTrue(timer.Elapsed.TotalSeconds <  1);
+        }
+
         /// <summary>
         /// Tests that FdmsDatabase can insert multiple records
         /// </summary>
@@ -78,7 +142,7 @@ namespace Tests
         [DoNotParallelize]
         public void Insert_CanInsertMultipleRecords()
         {
-            foreach(var record in TestData)
+            foreach (var record in TestData)
             {
                 var r = db.Insert(record);
                 Assert.IsTrue(r.Success);
@@ -164,7 +228,7 @@ namespace Tests
         {
             var recordsToInsert = TestData.Where(r => TestData[0].AircraftTailNum == r.AircraftTailNum).ToList();
 
-            foreach(var record in TestData)
+            foreach (var record in TestData)
             {
                 var r = db.Insert(record);
                 Assert.IsTrue(r.Success);
@@ -176,7 +240,7 @@ namespace Tests
 
             recordsToInsert.Reverse();
 
-            for(int i = 0; i < selectResult.Records.Count; i++)
+            for (int i = 0; i < selectResult.Records.Count; i++)
             {
                 Assert.IsTrue(EquateRecords(selectResult.Records[i], recordsToInsert[i]));
             }
