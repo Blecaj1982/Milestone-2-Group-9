@@ -74,6 +74,91 @@ namespace Tests
 
         [TestMethod]
         [DoNotParallelize]
+        public void IDB0301_Insert_1_Record_In_1_Second()
+        {
+            // setup
+            FdmsDatabase d = new FdmsDatabase();
+            var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
+            Assert.IsTrue(connectResult.Success);
+            TelemetryRecordDAL record = new TelemetryRecordDAL(
+                "G-SQXT",
+                DateTime.Parse("1-20-1992 6:06:50"),
+                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+            );
+
+            // test
+            Stopwatch timer = Stopwatch.StartNew();
+            var insertResult = d.Insert(record);
+            timer.Stop();
+
+            var selectResult = d.Select(record.AircraftTailNum);
+            d.Disconnect();
+
+            // Confirm results
+            Assert.IsTrue(insertResult.Success);
+            Assert.IsTrue(timer.Elapsed.TotalSeconds <  1);
+            Assert.IsTrue(selectResult.Success);
+            Assert.AreEqual(selectResult.Records.Count, 1);
+            Assert.IsTrue(EquateRecords(record, selectResult.Records[0]));
+        }
+
+        [TestMethod]
+        [DoNotParallelize]
+        public void DB0101_InsertReturnsErrorAfterDisconnection()
+        {
+            // setup
+            FdmsDatabase d = new FdmsDatabase();
+            var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
+            Assert.IsTrue(connectResult.Success);
+
+            TelemetryRecordDAL record = new TelemetryRecordDAL(
+                "G-TTXT",
+                DateTime.Parse("1-20-1992 6:06:50"),
+                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+            );
+
+            d.Disconnect();
+            var insertResult = d.Insert(record);
+
+            // Confirm results
+            Assert.IsFalse(insertResult.Success);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(insertResult.FailureMessage));
+        }
+
+        [TestMethod]
+        [DoNotParallelize]
+        public void DB0301_InsertReturnsErrorForRecordWithInvalidTailNum()
+        {
+            FdmsDatabase d = new FdmsDatabase();
+            var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
+            Assert.IsTrue(connectResult.Success);
+
+            TelemetryRecordDAL record = new TelemetryRecordDAL(
+                "BAD_TAIL_NUMBER_TOO_LONG",
+                DateTime.Parse("1-20-1992 6:06:50"),
+                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+            );
+
+            var insertResult = d.Insert(record);
+            d.Disconnect();
+
+            // Confirm results
+            Assert.IsFalse(insertResult.Success);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(insertResult.FailureMessage));
+        }
+
+        [TestMethod]
+        [DoNotParallelize]
+        public void DBFN030B1_InsertReturnsErrorWhenNotConnected()
+        {
+            FdmsDatabase d = new FdmsDatabase();
+            var insertResult = d.Insert(TestData[0]);
+            Assert.IsFalse(insertResult.Success);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(insertResult.FailureMessage));
+        }
+
+        [TestMethod]
+        [DoNotParallelize]
         public void DBFN030B2_Insert_1_Record_In_1_Second()
         {
             // setup
@@ -98,7 +183,7 @@ namespace Tests
             Assert.IsTrue(insertResult.Success);
             Assert.IsTrue(timer.Elapsed.TotalSeconds <  1);
             Assert.IsTrue(selectResult.Success);
-            Assert.IsTrue(selectResult.Records.Count == 1);
+            Assert.AreEqual(selectResult.Records.Count, 1);
             Assert.IsTrue(EquateRecords(record, selectResult.Records[0]));
         }
 
@@ -260,7 +345,7 @@ namespace Tests
 
             var selectResult = db.Select(recordToInsert.AircraftTailNum);
             Assert.IsTrue(selectResult.Success);
-            Assert.IsTrue(selectResult.Records.Count > 1);
+            Assert.IsTrue(selectResult.Records.Count >= 1);
             Assert.AreEqual(recordToInsert.AircraftTailNum, selectResult.Records[0].AircraftTailNum);
         }
 

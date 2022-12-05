@@ -11,6 +11,7 @@ namespace FDMS.DAL
     /// </summary>
     public class FdmsDatabase : IFdmsDatabase
     {
+        private readonly int AIRCRAFT_TAIL_NUM_MAX_LENGTH = 6;
         /// <summary>
         /// Indicates whether the object is connected to an FDMS database as of
         /// its last operation
@@ -115,7 +116,12 @@ namespace FDMS.DAL
         /// </returns>
         public DALResult Insert(TelemetryRecordDAL record)
         {
-            if (connection != null)
+            if (record.AircraftTailNum.Length > AIRCRAFT_TAIL_NUM_MAX_LENGTH)
+            {
+                return new DALResult($"Aircraft Tail Number longer than max length {AIRCRAFT_TAIL_NUM_MAX_LENGTH}");
+            }
+
+            else if (connection != null)
             {
                 try
                 {
