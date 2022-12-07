@@ -12,14 +12,14 @@ namespace FDMS.DAL
     /// </summary>
     public interface IFdmsDatabase
     {
-        DALResult Connect(IPAddress ip, ushort port, string username, string password);
-        DALResult Connect(string connectionString);
+        DalResult Connect(IPAddress ip, ushort port, string username, string password);
+        DalResult Connect(string connectionString);
 
-        DALResult Insert(TelemetryRecordDAL record);
+        DalResult Insert(TelemetryRecordDal record);
 
-        DALSelectResult Select(string aircraftTailNum);
+        DalSelectResult Select(string aircraftTailNum);
 
-        DALResult Disconnect();
+        DalResult Disconnect();
     }
 
 
@@ -31,20 +31,20 @@ namespace FDMS.DAL
     /// Failure message field will contain a description of the error that
     /// occurred
     /// </summary>
-    public class DALSelectResult
+    public class DalSelectResult
     {
-        public bool Success;
-        public string FailureMessage;
-        public List<TelemetryRecordDAL> Records;
+        public bool Success { get; set; }
+        public string FailureMessage { get; set; }
+        public List<TelemetryRecordDal> Records { get; set; }
 
-        public DALSelectResult(string failureMessage)
+        public DalSelectResult(string failureMessage)
         {
             Success = false;
             Records = null;
             FailureMessage = failureMessage;
         }
 
-        public DALSelectResult(List<TelemetryRecordDAL> records)
+        public DalSelectResult(List<TelemetryRecordDal> records)
         {
             Success = true;
             Records = records;
@@ -59,18 +59,19 @@ namespace FDMS.DAL
     /// If false, then the FailureMessage field will contain a description of
     /// the error that occurred.
     /// </summary>
-    public class DALResult
+    public class DalResult
     {
-        public bool Success;
-        public string FailureMessage;
 
-        public DALResult()
+        public bool Success { get; set; }
+        public string FailureMessage { get; set; }
+
+        public DalResult()
         {
             Success = true;
             FailureMessage = "";
         }
 
-        public DALResult(string failureMessage)
+        public DalResult(string failureMessage)
         {
             Success = false;
             FailureMessage = failureMessage;

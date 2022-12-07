@@ -9,7 +9,7 @@ namespace GroundTerminalSystem.classes
 {
     public class ListenerClass
     {
-        public delegate void RecordReceivedDelegate(TelemetryRecordDAL record);
+        public delegate void RecordReceivedDelegate(TelemetryRecordDal record);
         public event RecordReceivedDelegate RecordReceivedEvent
         {
             add
@@ -79,7 +79,7 @@ namespace GroundTerminalSystem.classes
             stopTokenSource.Cancel();
         }
 
-        private void InvokeRecordReceivedEvent(TelemetryRecordDAL record)
+        private void InvokeRecordReceivedEvent(TelemetryRecordDal record)
         {
             lock(recordReceivedEventLock)
             {
@@ -87,7 +87,7 @@ namespace GroundTerminalSystem.classes
             }
         }
 
-        private static void RecievePacket(object obj, Action<TelemetryRecordDAL> onRecordReceived, CancellationToken stopToken)
+        private static void RecievePacket(object obj, Action<TelemetryRecordDal> onRecordReceived, CancellationToken stopToken)
         {
             Socket tempHandler = (Socket)obj;
             tempHandler.Blocking = true;

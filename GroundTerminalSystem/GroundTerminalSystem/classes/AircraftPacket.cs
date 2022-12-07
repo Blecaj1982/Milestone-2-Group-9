@@ -27,9 +27,9 @@ namespace GroundTerminalSystem.classes
             PacketBulder(separatedFlightData);
         }
 
-        public TelemetryRecordDAL ConvertToTelemetryRecord()
+        public TelemetryRecordDal ConvertToTelemetryRecord()
         {
-            return new TelemetryRecordDAL(
+            return new TelemetryRecordDal(
                 AircraftTailNum,
                 Timestamp,
                 new GForceParameters(Accel_X, Accel_Y, Accel_Z, Weight),

@@ -8,7 +8,7 @@ namespace GroundTerminalSystem.classes
 {
     internal static class DatabaseSearch
     {
-        public static List<TelemetryRecordDAL> dbaseSearch(FdmsDatabase database, string searchItem)
+        public static List<TelemetryRecordDal> dbaseSearch(FdmsDatabase database, string searchItem)
         {
             var selectResult = database.Select(searchItem);
 
@@ -28,7 +28,7 @@ namespace GroundTerminalSystem.classes
                 MessageBox.Show(selectResult.FailureMessage);
             }
 
-            return new List<TelemetryRecordDAL>();
+            return new List<TelemetryRecordDal>();
         }
     }
 }

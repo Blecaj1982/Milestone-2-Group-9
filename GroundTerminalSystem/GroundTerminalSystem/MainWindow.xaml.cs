@@ -16,7 +16,7 @@ namespace GroundTerminalSystem
         LiveConnection liveConnectionPage = new LiveConnection();
         DatabaseInfo databaseInfoPage = new DatabaseInfo();
 
-        private List<TelemetryRecordDAL> liveData = new List<TelemetryRecordDAL>();
+        private List<TelemetryRecordDal> liveData = new List<TelemetryRecordDal>();
         bool isShowingLiveData = false;
         object isShowingLiveDataLockObject = new object();
 
@@ -57,7 +57,7 @@ namespace GroundTerminalSystem
             button.Style = (Style)Application.Current.Resources[enabled ? "SideMenuButton" : "SideMenuButtonDisabled"];
         }
 
-        private void AddRecordToLiveData(TelemetryRecordDAL record)
+        private void AddRecordToLiveData(TelemetryRecordDal record)
         {
            lock(isShowingLiveDataLockObject)
            {
