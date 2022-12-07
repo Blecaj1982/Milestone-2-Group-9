@@ -235,7 +235,10 @@ namespace FDMS.DAL
                 {
                     connection.Close();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
                 connection.Dispose();
                 connection = null;
