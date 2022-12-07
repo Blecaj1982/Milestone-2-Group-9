@@ -17,7 +17,7 @@ namespace FDMS.DAL
 
         DALResult Insert(TelemetryRecordDAL record);
 
-        DALSelectResult Select(string aircraftTailNum, int n = 100);
+        DALSelectResult Select(string aircraftTailNum);
 
         DALResult Disconnect();
     }

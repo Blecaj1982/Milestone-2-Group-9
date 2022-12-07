@@ -409,3 +409,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/AircraftTransmissionSystem/.sonarqube
+/Database/.sonarqube
+/GroundTerminalSystem/.sonarqube

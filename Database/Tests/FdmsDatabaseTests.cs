@@ -214,7 +214,7 @@ namespace Tests
             // start timer
             Stopwatch timer = Stopwatch.StartNew();
             // search for 100000 entries
-            var searchResult = d.Select(TestData.First().AircraftTailNum, 100000);
+            var searchResult = d.Select(TestData.First().AircraftTailNum);
             timer.Stop();
 
             d.Disconnect();
@@ -262,77 +262,10 @@ namespace Tests
             var insertResult = db.Insert(recordToInsert);
             Assert.IsTrue(insertResult.Success);
 
-            var selectResult = db.Select("ABCDEF", 1);
+            var selectResult = db.Select("ABCDEF");
             Assert.IsTrue(selectResult.Success);
             Assert.IsTrue(selectResult.Records.Count == 1);
             Assert.IsTrue(EquateRecords(recordToInsert, selectResult.Records[0]));
-        }
-
-        /// <summary>
-        /// Tests that limit parameter of the Select method limits the number
-        /// of records returned
-        /// </summary>
-        [TestMethod]
-        [DoNotParallelize]
-        public void Select_LimitOfOneWorks()
-        {
-            var recordsToInsert = TestData.OrderBy(r => r.AircraftTailNum).Take(2).ToList();
-            var insertResult = db.Insert(recordsToInsert[0]);
-            Assert.IsTrue(insertResult.Success);
-            insertResult = db.Insert(recordsToInsert[1]);
-            Assert.IsTrue(insertResult.Success);
-
-            var selectResult = db.Select(TestData[0].AircraftTailNum, 1);
-            Assert.IsTrue(selectResult.Success);
-            Assert.IsTrue(selectResult.Records.Count == 1);
-        }
-
-        /// <summary>
-        /// Tests that limit parameter of the Select method limits the number
-        /// of records returned
-        /// </summary>
-        [TestMethod]
-        [DoNotParallelize]
-        public void Select_LimitOfTwoWorks()
-        {
-            var recordsToInsert = TestData.OrderBy(r => r.AircraftTailNum).Take(3).ToList();
-            var insertResult = db.Insert(recordsToInsert[0]);
-            Assert.IsTrue(insertResult.Success);
-            insertResult = db.Insert(recordsToInsert[1]);
-            Assert.IsTrue(insertResult.Success);
-            insertResult = db.Insert(recordsToInsert[2]);
-            Assert.IsTrue(insertResult.Success);
-
-            var selectResult = db.Select(TestData[0].AircraftTailNum, 2);
-            Assert.IsTrue(selectResult.Success);
-            Assert.IsTrue(selectResult.Records.Count == 2);
-        }
-
-        /// <summary>
-        /// Tests that Select returns the latest records inserted into an FdmsDatabase
-        /// </summary>
-        [TestMethod]
-        [DoNotParallelize]
-        public void Select_RetrievesLatestInsertedRecords()
-        {
-            var recordsToInsert = TestData.Where(r => TestData[0].AircraftTailNum == r.AircraftTailNum).ToList();
-
-            foreach (var record in TestData)
-            {
-                var r = db.Insert(record);
-                Assert.IsTrue(r.Success);
-            }
-
-            var selectResult = db.Select(recordsToInsert[0].AircraftTailNum, recordsToInsert.Count);
-            Assert.IsTrue(selectResult.Success);
-            Assert.AreEqual(recordsToInsert.Count, selectResult.Records.Count);
-
-            recordsToInsert.Reverse();
-
-            for (int i = 0; i < selectResult.Records.Count; i++)
-            {
-                Assert.IsTrue(EquateRecords(selectResult.Records[i], recordsToInsert[i]));
-            }
         }
 
         /// <summary>
