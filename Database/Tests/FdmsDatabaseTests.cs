@@ -17,7 +17,7 @@ namespace Tests
     {
         public static FdmsDatabase db = new FdmsDatabase();
 
-        public static List<TelemetryRecordDAL> TestData = new List<TelemetryRecordDAL>();
+        public static List<TelemetryRecordDal> TestData = new List<TelemetryRecordDal>();
 
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Tests
             foreach (string[] l in parsedLines)
             {
                 TestData.Add(
-                    new TelemetryRecordDAL(
+                    new TelemetryRecordDal(
                     )
                     {
                         AircraftTailNum = l[0],
@@ -80,7 +80,7 @@ namespace Tests
             FdmsDatabase d = new FdmsDatabase();
             var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
             Assert.IsTrue(connectResult.Success);
-            TelemetryRecordDAL record = new TelemetryRecordDAL(
+            TelemetryRecordDal record = new TelemetryRecordDal(
                 "G-SQXT",
                 DateTime.Parse("1-20-1992 6:06:50"),
                 new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
@@ -112,7 +112,7 @@ namespace Tests
             var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
             Assert.IsTrue(connectResult.Success);
 
-            TelemetryRecordDAL record = new TelemetryRecordDAL(
+            TelemetryRecordDal record = new TelemetryRecordDal(
                 "G-TTXT",
                 DateTime.Parse("1-20-1992 6:06:50"),
                 new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
@@ -135,7 +135,7 @@ namespace Tests
             var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
             Assert.IsTrue(connectResult.Success);
 
-            TelemetryRecordDAL record = new TelemetryRecordDAL(
+            TelemetryRecordDal record = new TelemetryRecordDal(
                 "BAD_TAIL_NUMBER_TOO_LONG",
                 DateTime.Parse("1-20-1992 6:06:50"),
                 new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
@@ -168,7 +168,7 @@ namespace Tests
             FdmsDatabase d = new FdmsDatabase();
             var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
             Assert.IsTrue(connectResult.Success);
-            TelemetryRecordDAL record = new TelemetryRecordDAL(
+            TelemetryRecordDal record = new TelemetryRecordDal(
                 "G-TTXT",
                 DateTime.Parse("1-20-1992 6:06:50"),
                 new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
@@ -246,7 +246,7 @@ namespace Tests
         [DoNotParallelize]
         public void Insert_InsertedRecordsEndsUpInDatabase()
         {
-            TelemetryRecordDAL recordToInsert = new TelemetryRecordDAL()
+            TelemetryRecordDal recordToInsert = new TelemetryRecordDal()
             {
                 AircraftTailNum = "ABCDEF",
                 Timestamp = DateTime.Parse("1-20-1992 6:06:50"),
@@ -293,7 +293,7 @@ namespace Tests
         /// True if every field of two TelemetryRecordDALs are equal while
         /// ignoring their EntryTimestamp fields
         /// </returns>
-        public static bool EquateRecords(TelemetryRecordDAL recordA, TelemetryRecordDAL recordB)
+        public static bool EquateRecords(TelemetryRecordDal recordA, TelemetryRecordDal recordB)
         {
             return
                 recordA.AircraftTailNum == recordB.AircraftTailNum &&

@@ -17,7 +17,7 @@ namespace FDMS.DAL
         /// its last operation
         /// </summary>
         public bool Connected {
-            get => connection == null ? false : connection.State == System.Data.ConnectionState.Open;
+            get => connection != null && connection.State == System.Data.ConnectionState.Open;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace FDMS.DAL
         /// Indicates if the connection was successful, otherwise contains an
         /// error message indicating what problem occurred
         /// </returns>
-        public DALResult Connect(IPAddress ip, ushort port, string username, string password)
+        public DalResult Connect(IPAddress ip, ushort port, string username, string password)
         {
             return Connect(
                 $"Data Source={ip},{port};" +
@@ -65,7 +65,7 @@ namespace FDMS.DAL
         /// Indicates if the connection was successful, otherwise contains an
         /// error message indicating what problem occurred
         /// </returns>
-        public DALResult Connect(string connectionString)
+        public DalResult Connect(string connectionString)
         {
             CloseConnectionIfOpen();
 
@@ -74,13 +74,13 @@ namespace FDMS.DAL
             try
             {
                 connection.Open();
-                return new DALResult();
+                return new DalResult();
             }
             catch (Exception ex) // could not open connection
             {
                 connection.Dispose();
                 connection = null;
-                return new DALResult(ex.Message);
+                return new DalResult(ex.Message);
             }
         }
 
@@ -91,15 +91,15 @@ namespace FDMS.DAL
         /// Indicates if the disconnecting was successful, otherwise contains an
         /// error message indicating what problem occurred
         /// </returns>
-        public DALResult Disconnect()
+        public DalResult Disconnect()
         {
             if (CloseConnectionIfOpen())
             {
-                return new DALResult();
+                return new DalResult();
             }
             else //connection not open
             {
-                return new DALResult("Connection was not open.");
+                return new DalResult("Connection was not open.");
             }
         }
 
@@ -114,11 +114,11 @@ namespace FDMS.DAL
         /// database, otherwise contains an error message indicating what
         /// problem occurred
         /// </returns>
-        public DALResult Insert(TelemetryRecordDAL record)
+        public DalResult Insert(TelemetryRecordDal record)
         {
             if (record.AircraftTailNum.Length > AIRCRAFT_TAIL_NUM_MAX_LENGTH)
             {
-                return new DALResult($"Aircraft Tail Number longer than max length {AIRCRAFT_TAIL_NUM_MAX_LENGTH}");
+                return new DalResult($"Aircraft Tail Number longer than max length {AIRCRAFT_TAIL_NUM_MAX_LENGTH}");
             }
 
             else if (connection != null)
@@ -140,16 +140,16 @@ namespace FDMS.DAL
                         com.Parameters.AddWithValue("@Pitch", record.Pitch);
                         com.Parameters.AddWithValue("@Bank", record.Bank);
 
-                        return com.ExecuteNonQuery() > 0 ? new DALResult() : new DALResult("No rows affected.");
+                        return com.ExecuteNonQuery() > 0 ? new DalResult() : new DalResult("No rows affected.");
                     }
                 }
                 catch (Exception ex) //command failed
                 {
-                    return new DALResult(ex.Message);
+                    return new DalResult(ex.Message);
                 }
             }
 
-            return new DALResult("Connection is not open.");
+            return new DalResult("Connection is not open.");
         }
 
         /// <summary>
@@ -165,13 +165,13 @@ namespace FDMS.DAL
         /// list of the retrieved records, otherwise inidicates failure and
         /// provides an error message
         /// </returns>
-        public DALSelectResult Select(string aircraftTailNum)
+        public DalSelectResult Select(string aircraftTailNum)
         {
             if (connection != null)
             {
                 try
                 {
-                    List<TelemetryRecordDAL> records = new List<TelemetryRecordDAL>();
+                    List<TelemetryRecordDal> records = new List<TelemetryRecordDal>();
                     using (SqlCommand com = connection.CreateCommand())
                     {
                         // create and execute command to select records from database
@@ -189,7 +189,7 @@ namespace FDMS.DAL
                              */
                             while(reader.Read())
                             {
-                                TelemetryRecordDAL record = new TelemetryRecordDAL(
+                                TelemetryRecordDal record = new TelemetryRecordDal(
                                     reader.GetString(1),
                                     reader.GetDateTime(2),
                                     reader.GetDateTime(3),
@@ -211,15 +211,15 @@ namespace FDMS.DAL
                         }
                     }
 
-                    return new DALSelectResult(records);
+                    return new DalSelectResult(records);
                 }
                 catch (Exception ex) // command failed
                 {
-                    return new DALSelectResult(ex.Message);
+                    return new DalSelectResult(ex.Message);
                 }
             }
 
-            return new DALSelectResult("Connection is not open.");
+            return new DalSelectResult("Connection is not open.");
         }
 
         /// <summary>

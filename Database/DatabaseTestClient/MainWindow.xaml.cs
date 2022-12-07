@@ -18,7 +18,7 @@ using FDMS.DAL;
 
 namespace FDMS.DatabaseTestClient
 {
-    using InputConverter = Tuple<Func<string, object>, Action<object, TelemetryRecordDAL>>;
+    using InputConverter = Tuple<Func<string, object>, Action<object, TelemetryRecordDal>>;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -38,7 +38,7 @@ namespace FDMS.DatabaseTestClient
             connectedButtons.AddRange(new Button[] { DisconnectButton, InsertButton, SelectButton });
             connectedButtons.ForEach(b => b.IsEnabled = false);
 
-            insertInputConverters = new Dictionary<TextBox, Tuple<Func<string, object>, Action<object, TelemetryRecordDAL>>>()
+            insertInputConverters = new Dictionary<TextBox, Tuple<Func<string, object>, Action<object, TelemetryRecordDal>>>()
             {
                 { AircraftTailNumTextBox, new InputConverter(ConvertAircraftTailNum, (obj, rec) => rec.AircraftTailNum = (string)obj) },
                 { TimestampTextBox, new InputConverter(ConvertDateTime, (obj, rec)=> rec.Timestamp = (DateTime)obj)},
@@ -85,7 +85,7 @@ namespace FDMS.DatabaseTestClient
                 ConnectionInput input = ParseConnectionInput();
                 if (input.Valid)
                 {
-                    DALResult result = database.Connect(input.IpAddress, input.Port, input.Username, input.Password);
+                    DalResult result = database.Connect(input.IpAddress, input.Port, input.Username, input.Password);
 
                     if (result.Success && database.Connected)
                     {
@@ -104,7 +104,7 @@ namespace FDMS.DatabaseTestClient
         {
             if (database.Connected)
             {
-                DALResult result = database.Disconnect();
+                DalResult result = database.Disconnect();
                 if (!result.Success)
                 {
                     MessageBox.Show(result.FailureMessage);
@@ -128,7 +128,7 @@ namespace FDMS.DatabaseTestClient
 
                 if (input.Valid)
                 {
-                    DALResult result = database.Insert(input.Record);
+                    DalResult result = database.Insert(input.Record);
 
                     if (result.Success)
                     {
@@ -155,12 +155,12 @@ namespace FDMS.DatabaseTestClient
 
                 if (tailNum != null)
                 {
-                    DALSelectResult result = database.Select((string)tailNum);
+                    DalSelectResult result = database.Select((string)tailNum);
 
                     if (result.Success)
                     {
                         SelectedRecordsTextBox.Document.Blocks.Clear();
-                        foreach(TelemetryRecordDAL record in result.Records)
+                        foreach(TelemetryRecordDal record in result.Records)
                         {
                             SelectedRecordsTextBox.AppendText(
                                 string.Format(
@@ -195,7 +195,7 @@ namespace FDMS.DatabaseTestClient
         {
             bool valid = true;
 
-            TelemetryRecordDAL record = new TelemetryRecordDAL();
+            TelemetryRecordDal record = new TelemetryRecordDal();
 
             foreach(KeyValuePair<TextBox, InputConverter> kvp in insertInputConverters)
             {
@@ -261,7 +261,7 @@ namespace FDMS.DatabaseTestClient
             };
         }
 
-        private class ConnectionInput
+        sealed class ConnectionInput
         {
             public bool Valid;
             public string Username;
@@ -270,10 +270,10 @@ namespace FDMS.DatabaseTestClient
             public ushort Port;
         }
 
-        private class InsertInput
+        sealed class InsertInput
         {
             public bool Valid;
-            public TelemetryRecordDAL Record;
+            public TelemetryRecordDal Record;
         }
     }
 }
