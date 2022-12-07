@@ -159,15 +159,13 @@ namespace FDMS.DAL
         /// <param name="aircraftTailNum">
         /// Identifies which aircraft to retrieve the records of
         /// </param>
-        /// <param name="n">
-        /// Max amount of records to return
-        /// </param>
+        /// 
         /// <returns>
         /// Indicates if the select operation was successful and contains a
         /// list of the retrieved records, otherwise inidicates failure and
         /// provides an error message
         /// </returns>
-        public DALSelectResult Select(string aircraftTailNum, int n = 100)
+        public DALSelectResult Select(string aircraftTailNum)
         {
             if (connection != null)
             {
@@ -179,7 +177,7 @@ namespace FDMS.DAL
                         // create and execute command to select records from database
                         // NEED TO Interpolate parameter n into command string, it will not work as a parameter
                         com.CommandText =
-                            $"SELECT TOP {n} * FROM Telemetry_View WHERE (@tailNum) = Aircraft_Tail_Num ORDER BY Telemetry_ID Desc";
+                            $"SELECT TOP 1000 * FROM Telemetry_View WHERE (@tailNum) = Aircraft_Tail_Num ORDER BY Telemetry_ID Desc";
                         com.Parameters.AddWithValue("@tailNum", aircraftTailNum);
 
                         using (SqlDataReader reader = com.ExecuteReader())
