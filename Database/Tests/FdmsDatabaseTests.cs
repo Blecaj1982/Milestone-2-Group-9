@@ -83,7 +83,8 @@ namespace Tests
             TelemetryRecordDAL record = new TelemetryRecordDAL(
                 "G-SQXT",
                 DateTime.Parse("1-20-1992 6:06:50"),
-                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+                new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
+                new AltitudeParameters(9.9f, 10f, 11.1f)
             );
 
             // test
@@ -114,7 +115,8 @@ namespace Tests
             TelemetryRecordDAL record = new TelemetryRecordDAL(
                 "G-TTXT",
                 DateTime.Parse("1-20-1992 6:06:50"),
-                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+                new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
+                new AltitudeParameters(9.9f, 10f, 11.1f)
             );
 
             d.Disconnect();
@@ -136,7 +138,8 @@ namespace Tests
             TelemetryRecordDAL record = new TelemetryRecordDAL(
                 "BAD_TAIL_NUMBER_TOO_LONG",
                 DateTime.Parse("1-20-1992 6:06:50"),
-                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+                new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
+                new AltitudeParameters(9.9f, 10f, 11.1f)
             );
 
             var insertResult = d.Insert(record);
@@ -168,7 +171,8 @@ namespace Tests
             TelemetryRecordDAL record = new TelemetryRecordDAL(
                 "G-TTXT",
                 DateTime.Parse("1-20-1992 6:06:50"),
-                1.1f, 2.2f, 3.3f, 70f, 9.9f, 10f, 11.1f
+                new GForceParameters(1.1f, 2.2f, 3.3f, 70f),
+                new AltitudeParameters(9.9f, 10f, 11.1f)
             );
 
             // test

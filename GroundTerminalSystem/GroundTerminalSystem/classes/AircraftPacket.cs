@@ -32,13 +32,8 @@ namespace GroundTerminalSystem.classes
             return new TelemetryRecordDAL(
                 AircraftTailNum,
                 Timestamp,
-                Accel_X,
-                Accel_Y,
-                Accel_Z,
-                Weight,
-                Altitude,
-                Pitch,
-                Bank
+                new GForceParameters(Accel_X, Accel_Y, Accel_Z, Weight),
+                new AltitudeParameters(Altitude, Pitch, Bank )
             );
         }
 

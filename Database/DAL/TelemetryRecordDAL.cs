@@ -26,39 +26,67 @@ namespace FDMS.DAL
         /// <summary>
         /// Client code constructor for TelemetryRecordDAL. Lacks an EntryTimestamp parameter.
         /// </summary>
-        public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, float accel_X, float accel_Y, float accel_Z, float weight, float altitude, float pitch, float bank)
+        public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, GForceParameters gForceParameters, AltitudeParameters altitudeParameters) 
         {
             AircraftTailNum = aircraftTailNum;
             Timestamp = timestamp;
-            Accel_X = accel_X;
-            Accel_Y = accel_Y;
-            Accel_Z = accel_Z;
-            Weight = weight;
-            Altitude = altitude;
-            Pitch = pitch;
-            Bank = bank;
+            Accel_X = gForceParameters.Accel_X;
+            Accel_Y = gForceParameters.Accel_Y; 
+            Accel_Z = gForceParameters.Accel_Z;
+            Weight = gForceParameters.Weight;
+            Altitude = altitudeParameters.Altitude;
+            Pitch = altitudeParameters.Pitch;
+            Bank = altitudeParameters.Bank;
         }
 
         /// <summary>
         /// Database constructor for TelemetryRecordDAL. 
         /// </summary>
-        public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, DateTime entryTimestamp, float accel_X, float accel_Y, float accel_Z, float weight, float altitude, float pitch, float bank)
+        public TelemetryRecordDAL(string aircraftTailNum, DateTime timestamp, DateTime entryTimestamp, GForceParameters gForceParameters, AltitudeParameters altitudeParameters)
         {
             AircraftTailNum = aircraftTailNum;
             Timestamp = timestamp;
             EntryTimestamp = entryTimestamp;
-            Accel_X = accel_X;
-            Accel_Y = accel_Y;
-            Accel_Z = accel_Z;
-            Weight = weight;
-            Altitude = altitude;
-            Pitch = pitch;
-            Bank = bank;
+            Accel_X = gForceParameters.Accel_X;
+            Accel_Y = gForceParameters.Accel_Y; 
+            Accel_Z = gForceParameters.Accel_Z;
+            Weight = gForceParameters.Weight;
+            Altitude = altitudeParameters.Altitude;
+            Pitch = altitudeParameters.Pitch;
+            Bank = altitudeParameters.Bank;
         }
 
         public override string ToString()
         {
             return $"{AircraftTailNum},{Timestamp},{Accel_X:N6},{Accel_Y:N6},{Accel_Z:N6},{Weight:N6},{Altitude:N6},{Pitch:N6},{Bank:N6}";
+        }
+    }
+
+    public struct GForceParameters {
+        public float Accel_X; 
+        public float Accel_Y; 
+        public float Accel_Z;
+        public float Weight;
+        public GForceParameters (float accelX, float accelY, float accelZ, float weight)
+        {
+            Accel_X = accelX; 
+            Accel_Y = accelY;
+            Accel_Z = accelZ;
+            Weight = weight;
+        }
+    }
+
+    public struct AltitudeParameters
+    {
+        public float Altitude;
+        public float Pitch;
+        public float Bank;
+
+        public AltitudeParameters(float altitude, float pitch, float bank)
+        {
+            Altitude = altitude;
+            Pitch = pitch;
+            Bank = bank;
         }
     }
 }

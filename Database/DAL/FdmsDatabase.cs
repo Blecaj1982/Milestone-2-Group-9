@@ -195,13 +195,17 @@ namespace FDMS.DAL
                                     reader.GetString(1),
                                     reader.GetDateTime(2),
                                     reader.GetDateTime(3),
-                                    (float)reader.GetDouble(4),
-                                    (float)reader.GetDouble(5),
-                                    (float)reader.GetDouble(6),
-                                    (float)reader.GetDouble(7),
-                                    (float)reader.GetDouble(8),
-                                    (float)reader.GetDouble(9),
-                                    (float)reader.GetDouble(10)
+                                    new GForceParameters(
+                                        (float)reader.GetDouble(4),
+                                        (float)reader.GetDouble(5),
+                                        (float)reader.GetDouble(6),
+                                        (float)reader.GetDouble(7)
+                                    ),
+                                    new AltitudeParameters(
+                                        (float)reader.GetDouble(8),
+                                        (float)reader.GetDouble(9),
+                                        (float)reader.GetDouble(10)
+                                    )
                                 );
 
                                 records.Add(record);
