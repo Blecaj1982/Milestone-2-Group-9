@@ -98,7 +98,7 @@ namespace Tests
             Assert.IsTrue(insertResult.Success);
             Assert.IsTrue(timer.Elapsed.TotalSeconds <  1);
             Assert.IsTrue(selectResult.Success);
-            Assert.AreEqual(selectResult.Records.Count, 1);
+            Assert.AreEqual(1, selectResult.Records.Count);
             Assert.IsTrue(EquateRecords(record, selectResult.Records[0]));
         }
 
@@ -183,7 +183,7 @@ namespace Tests
             Assert.IsTrue(insertResult.Success);
             Assert.IsTrue(timer.Elapsed.TotalSeconds <  1);
             Assert.IsTrue(selectResult.Success);
-            Assert.AreEqual(selectResult.Records.Count, 1);
+            Assert.AreEqual(1, selectResult.Records.Count);
             Assert.IsTrue(EquateRecords(record, selectResult.Records[0]));
         }
 
