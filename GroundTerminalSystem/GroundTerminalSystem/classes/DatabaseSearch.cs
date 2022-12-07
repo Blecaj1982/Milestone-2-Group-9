@@ -28,7 +28,7 @@ namespace GroundTerminalSystem.classes
                 MessageBox.Show(selectResult.FailureMessage);
             }
 
-            return null;
+            return new List<TelemetryRecordDAL>();
         }
     }
 }

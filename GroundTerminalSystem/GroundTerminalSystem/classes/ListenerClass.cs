@@ -29,8 +29,8 @@ namespace GroundTerminalSystem.classes
         }
 
         private event RecordReceivedDelegate _recordReceivedEvent;
-        private CancellationTokenSource stopTokenSource = new CancellationTokenSource(); 
-        private object recordReceivedEventLock = new object();
+        private readonly CancellationTokenSource stopTokenSource = new CancellationTokenSource(); 
+        private readonly object recordReceivedEventLock = new object();
 
         public void ListenForConnection(Socket listenerSocket)
         {
@@ -112,8 +112,6 @@ namespace GroundTerminalSystem.classes
                     {
                         onRecordReceived(packet.ConvertToTelemetryRecord());
                     }
-
-                    data = "";
                 }
                 catch (SocketException ex) //error receiving data, connection probably severed, stop receiving
                 {

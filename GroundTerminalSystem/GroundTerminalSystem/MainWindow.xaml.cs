@@ -39,7 +39,7 @@ namespace GroundTerminalSystem
         private void InitializeStartPage()
         {
             bool shouldStartOnLiveDataPage = App.ListeningForTransmission || !App.ConnectedToDatabase;
-            mainPanel.Content = shouldStartOnLiveDataPage ? liveConnectionPage : mainPanel.Content = databaseInfoPage;
+            mainPanel.Content = (shouldStartOnLiveDataPage ? (Page)liveConnectionPage : (Page)databaseInfoPage);
 
             if (shouldStartOnLiveDataPage && App.ListeningForTransmission)
             {
