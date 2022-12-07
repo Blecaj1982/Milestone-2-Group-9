@@ -412,3 +412,4 @@ FodyWeavers.xsd
 /AircraftTransmissionSystem/.sonarqube
 /Database/.sonarqube
 /GroundTerminalSystem/.sonarqube
+/.sonarqube
