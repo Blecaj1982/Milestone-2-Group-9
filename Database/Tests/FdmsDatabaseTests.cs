@@ -193,7 +193,7 @@ namespace Tests
 
         [TestMethod]
         [DoNotParallelize]
-        public void DBFN0501_Search_100_000_Records_In_1_Second()
+        public void DBFN0501_Search_1000_Records_In_1_Second()
         {
             // create db instance
             FdmsDatabase d = new FdmsDatabase();
@@ -202,9 +202,9 @@ namespace Tests
             var connectResult = d.Connect("Server=(localdb)\\MSSQLLocalDB;User ID=FDMS_User;Password=FDMS_Password;Database=FDMS_Server");
             Assert.IsTrue(connectResult.Success);
 
-            // insert 100000 etnries
+            // insert 1000 etnries
             int entries = 0;
-            while(entries< 100000) {
+            while(entries< 1000) {
             for (int i = 0; i < TestData.Count; i++) {
                     d.Insert(TestData[i]);
                     entries++;
@@ -213,7 +213,7 @@ namespace Tests
 
             // start timer
             Stopwatch timer = Stopwatch.StartNew();
-            // search for 100000 entries
+            // search for 1000 entries
             var searchResult = d.Select(TestData.First().AircraftTailNum);
             timer.Stop();
 

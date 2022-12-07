@@ -40,7 +40,7 @@
                 </Button>
 
                 <!--Write to file button-->
-                <Button Grid.Column="2" x:Name="LogButton" Margin="190 0 0 0" Style="{StaticResource DataBaseScreenButtons}">
+                <Button Grid.Column="2" x:Name="LogButton" Margin="190 0 0 0" Style="{StaticResource DataBaseScreenButtons}" Click="LogButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="File" Style="{StaticResource DatabaseButtonIcons}"/>
                         <TextBlock Text="Write to file" Style="{StaticResource DatabaseButtonText}"/>
