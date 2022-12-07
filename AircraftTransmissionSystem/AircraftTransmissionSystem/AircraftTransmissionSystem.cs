@@ -18,7 +18,6 @@ namespace AircraftTransmissionSystem
         const int SERVER_PORT = 8989;
         const string SERVER_ADDRESS = "127.0.0.1";
         static string AircraftName = "C-FGAX";
-        private static bool Done = false;
         static readonly object lockObject = new object();
 
         /// <summary>
