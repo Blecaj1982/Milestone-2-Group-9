@@ -33,13 +33,9 @@ namespace FDMS.DAL
     /// </summary>
     public class DalSelectResult
     {
-        private bool success;
-        private string failureMessage;
-        private List<TelemetryRecordDal> records;
-
-        public bool Success { get => success; set => success = value; }
-        public string FailureMessage { get => failureMessage; set => failureMessage = value; }
-        public List<TelemetryRecordDal> Records { get => records; set => records = value; }
+        public bool Success { get; set; }
+        public string FailureMessage { get; set; }
+        public List<TelemetryRecordDal> Records { get; set; }
 
         public DalSelectResult(string failureMessage)
         {
@@ -65,11 +61,9 @@ namespace FDMS.DAL
     /// </summary>
     public class DalResult
     {
-        private bool success;
-        private string failureMessage;
 
-        public bool Success { get => success; set => success = value; }
-        public string FailureMessage { get => failureMessage; set => failureMessage = value; }
+        public bool Success { get; set; }
+        public string FailureMessage { get; set; }
 
         public DalResult()
         {

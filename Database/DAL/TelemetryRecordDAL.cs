@@ -63,40 +63,32 @@ namespace FDMS.DAL
     }
 
     public struct GForceParameters {
-        private float accel_X;
-        private float accel_Y;
-        private float accel_Z;
-        private float weight;
-
-        public float Accel_X { get => accel_X; set => accel_X = value; }
-        public float Accel_Y { get => accel_Y; set => accel_Y = value; }
-        public float Accel_Z { get => accel_Z; set => accel_Z = value; }
-        public float Weight { get => weight; set => weight = value; }
+        public float Accel_X { get; set; }
+        public float Accel_Y { get; set; }
+        public float Accel_Z { get; set; }
+        public float Weight { get; set; }
 
         public GForceParameters (float accelX, float accelY, float accelZ, float weight)
         {
-            accel_X = accelX; 
-            accel_Y = accelY;
-            accel_Z = accelZ;
-            this.weight = weight;
+            Accel_X = accelX; 
+            Accel_Y = accelY;
+            Accel_Z = accelZ;
+            Weight = weight;
         }
     }
 
     public struct AltitudeParameters
     {
-        private float altitude;
-        private float pitch;
-        private float bank;
 
-        public float Altitude { get => altitude; set => altitude = value; }
-        public float Pitch { get => pitch; set => pitch = value; }
-        public float Bank { get => bank; set => bank = value; }
+        public float Altitude { get; set; }
+        public float Pitch { get; set; }
+        public float Bank { get; set; }
 
         public AltitudeParameters(float altitude, float pitch, float bank)
         {
-            this.altitude = altitude;
-            this.pitch = pitch;
-            this.bank = bank;
+            Altitude = altitude;
+            Pitch = pitch;
+            Bank = bank;
         }
     }
 }
